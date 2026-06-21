@@ -1,6 +1,7 @@
 okf-cli
 
 specs/
+.okf/
 
 .DS_Store
 .crush

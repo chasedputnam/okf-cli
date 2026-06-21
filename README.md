@@ -36,19 +36,65 @@ okf-cli crawl https://docs.example.com --out ./my-bundle
 okf-cli import ./docs --out ./my-bundle
 ```
 
-### 3. Validate Your Bundle
+### 3. Enable an Existing Repository
+
+Turn any repository with scattered Markdown files into a searchable knowledge bundle:
+
+```bash
+# Import all Markdown files from a repository
+okf-cli import ~/repo/my-project --out ~/repo/my-project/.okf --source-name "My Project"
+
+# Filter to specific directories or patterns
+okf-cli import ~/repo/my-project \
+  --out ~/repo/my-project/.okf \
+  --source-name "My Project" \
+  --include "docs/**/*.md" \
+  --include "**/*.mdx" \
+  --include "**/README.md" \
+  --exclude "node_modules/**" \
+  --exclude "vendor/**"
+
+# Add .okf to .gitignore (optional)
+echo ".okf/" >> ~/repo/my-project/.gitignore
+
+# Serve to AI agents
+okf-cli serve ~/repo/my-project/.okf --mcp
+```
+
+This creates a `.okf` bundle inside your repository that indexes all documentation, READMEs, ADRs, and other Markdown content. AI agents can then search and navigate your project's knowledge base.
+
+**Example: Enable a monorepo**
+```bash
+okf-cli import ~/repo/cloud-platform \
+  --out ~/repo/cloud-platform/.okf \
+  --source-name "Cloud Platform" \
+  --include "**/docs/**/*.md" \
+  --include "**/README.md" \
+  --include "**/ARCHITECTURE.md" \
+  --include "**/adr/**/*.md" \
+  --exclude "**/test/**" \
+  --exclude "**/fixtures/**"
+```
+
+**Keep the bundle updated**
+```bash
+# Re-import when docs change
+okf-cli update ~/repo/my-project/.okf --force
+```
+
+### 4. Validate Your Bundle
 
 ```bash
 okf-cli validate ./my-bundle
 ```
 
-### 4. Serve via MCP
+### 5. Serve via MCP
 
 ```bash
 okf-cli serve ./my-bundle --mcp
 ```
 
-### 5. Configure Your AI Client
+### 6. Configure Your AI Client
 
 Add to your MCP client configuration (e.g., Claude Desktop):
 
