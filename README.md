@@ -22,14 +22,14 @@ Download the latest binary for your platform from the [releases page](https://gi
 ### Build from Source
 
 ```bash
-go install github.com/okf-cli/okf-mcp/cmd/okf-cli@latest
+go install github.com/chasedputnam/okf-cli/cmd/okf-cli@latest
 ```
 
 Or clone and build:
 
 ```bash
-git clone https://github.com/okf-cli/okf-mcp.git
-cd okf-mcp
+git clone https://github.com/chasedputnam/okf-cli.git
+cd okf-cli
 make build
 ```
 
