@@ -53,15 +53,16 @@ func TestEngine_FallsBackToLocalProvider(t *testing.T) {
 		t.Fatalf("NewEngine: %v", err)
 	}
 	name := e.ProviderName()
-	if runtime.GOOS == "darwin" {
+	switch runtime.GOOS {
+	case "darwin":
 		if name != "apple" && name != "ollama" {
 			t.Errorf("expected apple or ollama, got %q", name)
 		}
-	} else if runtime.GOOS == "windows" {
+	case "windows":
 		if name != "windows" && name != "ollama" {
 			t.Errorf("expected windows or ollama, got %q", name)
 		}
-	} else {
+	default:
 		if name != "ollama" {
 			t.Errorf("expected ollama, got %q", name)
 		}

@@ -126,7 +126,7 @@ func StripCallout(body string) string {
 		return body
 	}
 	// Find the line start for idx.
-	start := idx
+	var start int
 	if nl := strings.LastIndex(body[:idx], "\n"); nl >= 0 {
 		start = nl + 1
 	} else {
