@@ -5,15 +5,18 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
-	"github.com/okfy/okf-mcp/internal/compress"
-	"github.com/okfy/okf-mcp/internal/search"
-	"github.com/okfy/okf-mcp/internal/tokens"
-	"github.com/okfy/okf-mcp/internal/validate"
+	"github.com/chasedputnam/okf-cli/internal/compress"
+	"github.com/chasedputnam/okf-cli/internal/scale"
+	"github.com/chasedputnam/okf-cli/internal/search"
+	"github.com/chasedputnam/okf-cli/internal/tokens"
+	"github.com/chasedputnam/okf-cli/internal/validate"
 )
 
 // ServerOptions configures the MCP server.
@@ -498,7 +501,17 @@ func (s *Server) handleBundleSummary(ctx context.Context, request mcp.CallToolRe
 		return s.jsonResult(map[string]any{"error": err.Error()})
 	}
 
-	return s.jsonResult(map[string]any{
+	// Get scale metrics
+	metrics, ceiling, _ := scale.Analyze(s.bundleDir)
+
+	// Read index content for navigation
+	var indexContent string
+	indexPath := filepath.Join(s.bundleDir, "index.md")
+	if data, err := os.ReadFile(indexPath); err == nil {
+		indexContent = string(data)
+	}
+
+	result := map[string]any{
 		"title":             stats.Title,
 		"conceptCount":      stats.ConceptCount,
 		"linkCount":         stats.LinkCount,
@@ -510,7 +523,23 @@ func (s *Server) handleBundleSummary(ctx context.Context, request mcp.CallToolRe
 		"sourceDomains":     stats.SourceDomains,
 		"validationStatus":  boolToStatus(report.Valid),
 		"validationIssues":  report.Issues,
-	})
+	}
+
+	// Add scale metrics if available
+	if metrics != nil {
+		result["totalTokens"] = metrics.TotalTokens
+		result["indexTokens"] = metrics.IndexTokens
+		result["avgTokensPerConcept"] = metrics.AvgTokensPerConcept
+		result["scaleStatus"] = string(ceiling.Status)
+		result["scaleMessage"] = ceiling.Message
+	}
+
+	// Add index content for summary-first navigation
+	if indexContent != "" {
+		result["indexContent"] = indexContent
+	}
+
+	return s.jsonResult(result)
 }
 
 func boolToStatus(valid bool) string {

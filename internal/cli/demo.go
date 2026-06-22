@@ -8,9 +8,9 @@ import (
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 
-	"github.com/okfy/okf-mcp/internal/embed"
-	"github.com/okfy/okf-mcp/internal/mcp"
-	"github.com/okfy/okf-mcp/internal/validate"
+	"github.com/chasedputnam/okf-cli/internal/embed"
+	"github.com/chasedputnam/okf-cli/internal/mcp"
+	"github.com/chasedputnam/okf-cli/internal/validate"
 )
 
 var demoCmd = &cobra.Command{

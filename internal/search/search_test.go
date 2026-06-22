@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/okfy/okf-mcp/internal/types"
+	"github.com/chasedputnam/okf-cli/internal/types"
 )
 
 func TestBundleSearch(t *testing.T) {

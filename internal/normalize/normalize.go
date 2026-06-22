@@ -7,8 +7,8 @@ import (
 
 	md "github.com/JohannesKaufmann/html-to-markdown"
 	"github.com/PuerkitoBio/goquery"
-	"github.com/okfy/okf-mcp/internal/types"
-	"github.com/okfy/okf-mcp/internal/util"
+	"github.com/chasedputnam/okf-cli/internal/types"
+	"github.com/chasedputnam/okf-cli/internal/util"
 )
 
 // elementsToRemove are HTML elements that should be stripped before conversion.

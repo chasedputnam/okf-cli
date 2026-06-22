@@ -7,8 +7,11 @@ import (
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 
-	"github.com/okfy/okf-mcp/internal/validate"
+	"github.com/chasedputnam/okf-cli/internal/scale"
+	"github.com/chasedputnam/okf-cli/internal/validate"
 )
+
+var showRecommendations bool
 
 var inspectCmd = &cobra.Command{
 	Use:   "inspect <bundle>",
@@ -19,6 +22,7 @@ var inspectCmd = &cobra.Command{
 }
 
 func init() {
+	inspectCmd.Flags().BoolVar(&showRecommendations, "recommendations", false, "Show RAG graduation guidance if scale ceiling is exceeded")
 	rootCmd.AddCommand(inspectCmd)
 }
 
@@ -31,6 +35,9 @@ func runInspect(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	// Get scale metrics
+	metrics, ceiling, scaleErr := scale.Analyze(bundleDir)
+
 	fmt.Println("okf-cli inspect")
 	fmt.Println()
 
@@ -41,6 +48,28 @@ func runInspect(cmd *cobra.Command, args []string) error {
 	fmt.Printf("Links: %d\n", stats.LinkCount)
 	fmt.Printf("Broken links: %d\n", stats.BrokenLinks)
 	fmt.Printf("Orphan concepts: %d\n", len(stats.OrphanConcepts))
+
+	// Scale metrics section
+	if scaleErr == nil {
+		fmt.Println("\nScale Metrics:")
+		fmt.Printf("  Total tokens:     %d\n", metrics.TotalTokens)
+		fmt.Printf("  Avg tokens/concept: %d\n", metrics.AvgTokensPerConcept)
+		fmt.Printf("  Index tokens:     %d\n", metrics.IndexTokens)
+		if metrics.TotalTokens > 0 {
+			fmt.Printf("  Index ratio:      %.2f%%\n", metrics.IndexRatio*100)
+		}
+
+		// Scale status with color
+		fmt.Print("  Scale status:     ")
+		switch ceiling.Status {
+		case scale.StatusHealthy:
+			color.Green("%s\n", ceiling.Message)
+		case scale.StatusWarning:
+			color.Yellow("%s\n", ceiling.Message)
+		case scale.StatusExceeded:
+			color.Red("%s\n", ceiling.Message)
+		}
+	}
 
 	if len(stats.TypeDistribution) > 0 {
 		fmt.Println("\nType distribution:")
@@ -67,6 +96,12 @@ func runInspect(cmd *cobra.Command, args []string) error {
 		for _, d := range domains {
 			fmt.Printf("  %s: %d\n", d, stats.SourceDomains[d])
 		}
+	}
+
+	// Show RAG guidance if requested and ceiling exceeded
+	if showRecommendations && scaleErr == nil && ceiling.Status == scale.StatusExceeded {
+		fmt.Println("\n" + color.YellowString("RAG Graduation Guidance:"))
+		fmt.Println(scale.RAGGuidance())
 	}
 
 	return nil

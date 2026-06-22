@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/okfy/okf-mcp/internal/types"
-	"github.com/okfy/okf-mcp/internal/util"
+	"github.com/chasedputnam/okf-cli/internal/types"
+	"github.com/chasedputnam/okf-cli/internal/util"
 	"gopkg.in/yaml.v3"
 )
 

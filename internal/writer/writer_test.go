@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/okfy/okf-mcp/internal/types"
+	"github.com/chasedputnam/okf-cli/internal/types"
 )
 
 func TestGenerateFrontmatter(t *testing.T) {

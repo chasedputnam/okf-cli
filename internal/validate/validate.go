@@ -10,10 +10,12 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/okfy/okf-mcp/internal/graph"
-	"github.com/okfy/okf-mcp/internal/reader"
-	"github.com/okfy/okf-mcp/internal/types"
-	"github.com/okfy/okf-mcp/internal/util"
+	"github.com/chasedputnam/okf-cli/internal/graph"
+	"github.com/chasedputnam/okf-cli/internal/reader"
+	"github.com/chasedputnam/okf-cli/internal/scale"
+	"github.com/chasedputnam/okf-cli/internal/summarize"
+	"github.com/chasedputnam/okf-cli/internal/types"
+	"github.com/chasedputnam/okf-cli/internal/util"
 	"gopkg.in/yaml.v3"
 )
 
@@ -72,13 +74,22 @@ func validateIndexFile(raw, relPath string, issues *[]types.ValidationIssue) {
 			return
 		}
 
-		// Root index.md may only have okf_version
-		if len(frontmatter) != 1 {
+		// Root index.md must have okf_version; may also have total_concepts, total_tokens, generated
+		allowedFields := map[string]bool{
+			"okf_version":    true,
+			"total_concepts": true,
+			"total_tokens":   true,
+			"generated":      true,
+		}
+		if _, ok := frontmatter["okf_version"].(string); !ok {
 			*issues = append(*issues, issue("error", "reserved_index_frontmatter",
-				"Root index.md frontmatter may contain only string okf_version.", relPath))
-		} else if _, ok := frontmatter["okf_version"].(string); !ok {
-			*issues = append(*issues, issue("error", "reserved_index_frontmatter",
-				"Root index.md frontmatter may contain only string okf_version.", relPath))
+				"Root index.md frontmatter must contain string okf_version.", relPath))
+		}
+		for key := range frontmatter {
+			if !allowedFields[key] {
+				*issues = append(*issues, issue("error", "reserved_index_frontmatter",
+					fmt.Sprintf("Root index.md frontmatter contains unknown field '%s'.", key), relPath))
+			}
 		}
 	}
 
@@ -291,6 +302,34 @@ func ValidateBundle(bundleDir string) (*types.ValidationReport, error) {
 			}
 			issues = append(issues, issue("warning", "missing_folder_index",
 				"Folder has concepts but no index.md.", util.ToPosixPath(relDir)))
+		}
+	}
+
+	// Filing cabinet checks: summary callouts and scale ceiling
+	for _, concept := range concepts {
+		// Check for summary callout
+		if !summarize.HasCallout(concept.Body) {
+			issues = append(issues, issue("warning", "missing_summary",
+				"Concept missing > [!summary] callout for navigation.", concept.Path))
+		} else {
+			// Check summary length
+			if summaryText, found := summarize.ParseCallout(concept.Body); found {
+				if len(summaryText) > summarize.MaxSummaryLength {
+					issues = append(issues, issue("warning", "summary_too_long",
+						fmt.Sprintf("Summary exceeds %d characters (%d chars).", summarize.MaxSummaryLength, len(summaryText)), concept.Path))
+				}
+			}
+		}
+	}
+
+	// Check scale ceiling
+	_, ceiling, scaleErr := scale.Analyze(bundleDir)
+	if scaleErr == nil {
+		switch ceiling.Status {
+		case scale.StatusWarning:
+			issues = append(issues, issue("warning", "scale_ceiling_warn", ceiling.Message))
+		case scale.StatusExceeded:
+			issues = append(issues, issue("warning", "scale_ceiling_exceed", ceiling.Message))
 		}
 	}
 

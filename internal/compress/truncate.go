@@ -3,7 +3,7 @@ package compress
 import (
 	"strings"
 
-	"github.com/okfy/okf-mcp/internal/tokens"
+	"github.com/chasedputnam/okf-cli/internal/tokens"
 )
 
 // TruncateOptions configures truncation behavior.

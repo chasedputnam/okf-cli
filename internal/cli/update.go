@@ -10,8 +10,8 @@ import (
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 
-	"github.com/okfy/okf-mcp/internal/differ"
-	"github.com/okfy/okf-mcp/internal/updater"
+	"github.com/chasedputnam/okf-cli/internal/differ"
+	"github.com/chasedputnam/okf-cli/internal/updater"
 )
 
 var updateCmd = &cobra.Command{

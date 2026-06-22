@@ -7,7 +7,7 @@ import (
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 
-	"github.com/okfy/okf-mcp/internal/importer"
+	"github.com/chasedputnam/okf-cli/internal/importer"
 )
 
 var importCmd = &cobra.Command{

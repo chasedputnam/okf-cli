@@ -4,9 +4,9 @@ package context
 import (
 	"sort"
 
-	"github.com/okfy/okf-mcp/internal/compress"
-	"github.com/okfy/okf-mcp/internal/search"
-	"github.com/okfy/okf-mcp/internal/tokens"
+	"github.com/chasedputnam/okf-cli/internal/compress"
+	"github.com/chasedputnam/okf-cli/internal/search"
+	"github.com/chasedputnam/okf-cli/internal/tokens"
 )
 
 // AssemblyOptions configures context assembly.

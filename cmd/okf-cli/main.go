@@ -4,7 +4,7 @@ package main
 import (
 	"os"
 
-	"github.com/okfy/okf-mcp/internal/cli"
+	"github.com/chasedputnam/okf-cli/internal/cli"
 )
 
 // Version is set at build time via ldflags.

@@ -444,3 +444,119 @@ func compressContent(content, level string) string {
 		return content
 	}
 }
+
+// TestE2EImportGeneratesSummaries tests that import generates summary callouts
+func TestE2EImportGeneratesSummaries(t *testing.T) {
+	outDir := filepath.Join(t.TempDir(), "bundle")
+
+	// Run import command
+	importCmd := exec.Command(testBinaryPath, "import", "testdata/fixtures/markdown-docs", "--out", outDir)
+	if out, err := importCmd.CombinedOutput(); err != nil {
+		t.Fatalf("Import failed: %v\n%s", err, out)
+	}
+
+	// Check that concepts have summary callouts
+	readmePath := filepath.Join(outDir, "readme.md")
+	content, err := os.ReadFile(readmePath)
+	if err != nil {
+		t.Fatalf("Failed to read readme.md: %v", err)
+	}
+
+	if !strings.Contains(string(content), "> [!summary]") {
+		t.Error("Expected readme.md to have a summary callout")
+	}
+}
+
+// TestE2EImportGeneratesEnhancedIndex tests that import generates index with summaries
+func TestE2EImportGeneratesEnhancedIndex(t *testing.T) {
+	outDir := filepath.Join(t.TempDir(), "bundle")
+
+	// Run import command
+	importCmd := exec.Command(testBinaryPath, "import", "testdata/fixtures/markdown-docs", "--out", outDir)
+	if out, err := importCmd.CombinedOutput(); err != nil {
+		t.Fatalf("Import failed: %v\n%s", err, out)
+	}
+
+	// Check index.md has enhanced format
+	indexPath := filepath.Join(outDir, "index.md")
+	content, err := os.ReadFile(indexPath)
+	if err != nil {
+		t.Fatalf("Failed to read index.md: %v", err)
+	}
+
+	indexStr := string(content)
+
+	// Check for total_concepts in frontmatter
+	if !strings.Contains(indexStr, "total_concepts:") {
+		t.Error("Expected index.md to have total_concepts in frontmatter")
+	}
+
+	// Check for Concepts heading with count
+	if !strings.Contains(indexStr, "## Concepts (") {
+		t.Error("Expected index.md to have '## Concepts (' heading")
+	}
+
+	// Check for wikilink format
+	if !strings.Contains(indexStr, "[[") {
+		t.Error("Expected index.md to use [[wikilink]] format")
+	}
+}
+
+// TestE2EInspectShowsScaleMetrics tests that inspect shows scale metrics
+func TestE2EInspectShowsScaleMetrics(t *testing.T) {
+	// Run inspect on demo bundle
+	inspectCmd := exec.Command(testBinaryPath, "inspect", "examples/bundles/okf-cli-docs")
+	out, err := inspectCmd.CombinedOutput()
+	if err != nil {
+		t.Fatalf("Inspect failed: %v\n%s", err, out)
+	}
+
+	output := string(out)
+
+	// Check for scale metrics section
+	if !strings.Contains(output, "Scale Metrics:") {
+		t.Errorf("Expected 'Scale Metrics:' in output, got: %s", output)
+	}
+	if !strings.Contains(output, "Total tokens:") {
+		t.Errorf("Expected 'Total tokens:' in output, got: %s", output)
+	}
+	if !strings.Contains(output, "Scale status:") {
+		t.Errorf("Expected 'Scale status:' in output, got: %s", output)
+	}
+}
+
+// TestE2EValidateWarnsOnMissingSummary tests backward compatibility warning
+func TestE2EValidateWarnsOnMissingSummary(t *testing.T) {
+	// Create a bundle without summaries (old format)
+	outDir := filepath.Join(t.TempDir(), "bundle")
+	if err := os.MkdirAll(outDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create index.md
+	indexContent := "---\nokf_version: \"0.1\"\n---\n\n# Test Bundle\n\n- [Test](test.md)\n"
+	if err := os.WriteFile(filepath.Join(outDir, "index.md"), []byte(indexContent), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create concept without summary callout
+	conceptContent := "---\ntype: Guide\ntitle: Test\n---\n\n# Test\n\nContent without summary callout."
+	if err := os.WriteFile(filepath.Join(outDir, "test.md"), []byte(conceptContent), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Run validate
+	validateCmd := exec.Command(testBinaryPath, "validate", outDir)
+	out, _ := validateCmd.CombinedOutput()
+	output := string(out)
+
+	// Should still be valid (missing summary is warning, not error)
+	if !strings.Contains(output, "Bundle is valid") {
+		t.Errorf("Bundle without summaries should still be valid, got: %s", output)
+	}
+
+	// Should have warning about missing summary
+	if !strings.Contains(output, "missing_summary") {
+		t.Errorf("Expected missing_summary warning in output, got: %s", output)
+	}
+}

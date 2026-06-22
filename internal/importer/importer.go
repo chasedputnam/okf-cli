@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/okfy/okf-mcp/internal/normalize"
-	"github.com/okfy/okf-mcp/internal/types"
-	"github.com/okfy/okf-mcp/internal/util"
-	"github.com/okfy/okf-mcp/internal/writer"
+	"github.com/chasedputnam/okf-cli/internal/normalize"
+	"github.com/chasedputnam/okf-cli/internal/types"
+	"github.com/chasedputnam/okf-cli/internal/util"
+	"github.com/chasedputnam/okf-cli/internal/writer"
 )
 
 // ImportOptions configures the import operation.

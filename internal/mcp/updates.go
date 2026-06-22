@@ -11,9 +11,10 @@ import (
 	"time"
 
 	"github.com/mark3labs/mcp-go/mcp"
-	"github.com/okfy/okf-mcp/internal/changelog"
-	"github.com/okfy/okf-mcp/internal/updater"
-	"github.com/okfy/okf-mcp/internal/validate"
+	"github.com/chasedputnam/okf-cli/internal/changelog"
+	"github.com/chasedputnam/okf-cli/internal/scale"
+	"github.com/chasedputnam/okf-cli/internal/updater"
+	"github.com/chasedputnam/okf-cli/internal/validate"
 )
 
 // CheckUpdatesResult is returned by check_updates tool.
@@ -166,13 +167,17 @@ func (s *Server) handleApplyUpdates(ctx context.Context, request mcp.CallToolReq
 
 // BundleHealthResult is returned by bundle_health tool.
 type BundleHealthResult struct {
-	Valid           bool      `json:"valid"`
-	ConceptCount    int       `json:"concept_count"`
-	LastUpdated     *time.Time `json:"last_updated,omitempty"`
-	SourceURL       string    `json:"source_url,omitempty"`
-	SourceReachable *bool     `json:"source_reachable,omitempty"`
-	BrokenLinks     int       `json:"broken_links"`
-	Warnings        []string  `json:"warnings,omitempty"`
+	Valid            bool       `json:"valid"`
+	ConceptCount     int        `json:"concept_count"`
+	LastUpdated      *time.Time `json:"last_updated,omitempty"`
+	SourceURL        string     `json:"source_url,omitempty"`
+	SourceReachable  *bool      `json:"source_reachable,omitempty"`
+	BrokenLinks      int        `json:"broken_links"`
+	Warnings         []string   `json:"warnings,omitempty"`
+	MissingSummaries int        `json:"missing_summaries"`
+	OrphanConcepts   []string   `json:"orphan_concepts,omitempty"`
+	ScaleCeiling     string     `json:"scale_ceiling"`
+	ScaleMessage     string     `json:"scale_message,omitempty"`
 }
 
 func (s *Server) handleBundleHealth(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
@@ -207,11 +212,26 @@ func (s *Server) handleBundleHealth(ctx context.Context, request mcp.CallToolReq
 		BrokenLinks:  stats.BrokenLinks,
 	}
 
-	// Collect warnings
+	// Collect warnings and count missing summaries
+	missingSummaries := 0
 	for _, issue := range report.Issues {
 		if issue.Severity == "warning" {
 			result.Warnings = append(result.Warnings, issue.Message)
+			if issue.Code == "missing_summary" {
+				missingSummaries++
+			}
 		}
+	}
+	result.MissingSummaries = missingSummaries
+	result.OrphanConcepts = stats.OrphanConcepts
+
+	// Get scale ceiling status
+	_, ceiling, scaleErr := scale.Analyze(s.bundleDir)
+	if scaleErr == nil {
+		result.ScaleCeiling = string(ceiling.Status)
+		result.ScaleMessage = ceiling.Message
+	} else {
+		result.ScaleCeiling = "unknown"
 	}
 
 	// Get source from changelog

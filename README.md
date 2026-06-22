@@ -1,6 +1,17 @@
 # OKF-CLI
 
-OKF-CLI converts documentation websites and local Markdown folders into Open Knowledge Format (OKF) bundles. These bundles can be served via MCP (Model Context Protocol) to AI agents like Claude, Codex, or Cursor.
+OKF-CLI converts documentation websites and local Markdown folders into extended Open Knowledge Format (OKF) bundles. These bundles implement a filing cabinet concept architecture pattern for AI agents, providing durable structured artifacts with summary-first navigation that scales sublinearly with corpus size.
+
+## The Filing Cabinet Architecture
+
+OKF bundles are designed as a "filing cabinet" for AI agents - a persistent, structured knowledge store that lives outside the context window. Key properties:
+
+- **Summary-first navigation**: Each concept has a summary callout, and the index provides inline summaries so agents can decide what to read without paying full token cost
+- **Bidirectional backlinks**: Concepts track both outbound links and backlinks in frontmatter, enabling graph traversal
+- **Scale ceiling detection**: The `inspect` command warns when bundles exceed ~100 concepts or ~400K tokens, signaling when to consider adding a RAG implementation instead
+- **Token-aware retrieval**: Tools support token budgets and compression levels to fit responses within context windows
+
+This architecture allows AI agents to efficiently navigate large documentation sets by reading summaries first, then drilling into specific concepts as needed.
 
 ## Installation
 
@@ -36,7 +47,7 @@ okf-cli crawl https://docs.example.com --out ./my-bundle
 okf-cli import ./docs --out ./my-bundle
 ```
 
-### 3. Enable an Existing Repository
+#### Ex: Enable an Existing Repository
 
 Turn any repository with scattered Markdown files into a searchable knowledge bundle:
 
@@ -148,19 +159,39 @@ Options:
 
 ### `okf-cli validate <bundle>`
 
-Validate an OKF bundle.
+Validate an OKF bundle structure and health.
 
 ```bash
 okf-cli validate ./bundle [--json]
 ```
 
+Validates:
+- Index structure and frontmatter
+- Concept frontmatter (required `type` field)
+- Internal link integrity (broken links)
+- **Filing cabinet health**: missing summary callouts, summary length, scale ceiling
+
+Missing summaries produce warnings (not errors) for backward compatibility with older bundles.
+
 ### `okf-cli inspect <bundle>`
 
-Display bundle statistics.
+Display bundle statistics and scale metrics.
 
 ```bash
 okf-cli inspect ./bundle
+okf-cli inspect ./bundle --recommendations
 ```
+
+Output includes:
+- Concept count, link count, broken links, orphan concepts
+- Type and tag distribution
+- **Scale metrics**: total tokens, average tokens per concept, index ratio
+- **Scale status**: healthy, warning (approaching ceiling), or exceeded
+
+Options:
+- `--recommendations` - Show RAG graduation guidance if scale ceiling is exceeded
+
+When a bundle exceeds ~100 concepts or ~400K tokens, `inspect` warns that the filing cabinet pattern is approaching its scale ceiling. Use `--recommendations` to see guidance on adding vector search.
 
 ### `okf-cli serve <bundle>`
 
@@ -224,19 +255,19 @@ When serving a bundle via MCP, the following tools are available to AI agents:
 |------|-------------|
 | `search_concepts` | Full-text search across concepts with token budget control |
 | `read_concept` | Read a specific concept's content with compression options |
-| `get_neighbors` | Find related concepts via links |
+| `get_neighbors` | Find related concepts via outbound links and backlinks |
 | `get_context` | Smart context assembly for a topic with token budget |
 | `list_types` | List all concept types in the bundle |
 | `list_tags` | List all tags in the bundle |
-| `bundle_summary` | Get bundle statistics |
+| `bundle_summary` | Get bundle statistics, scale metrics, and index content |
 
 ### Live Update Tools
 
 | Tool | Description |
 |------|-------------|
 | `check_updates` | Check if the bundle source has updates available |
-| `apply_updates` | Apply pending updates from the source |
-| `bundle_health` | Check bundle health, staleness, and source reachability |
+| `apply_updates` | Apply pending updates from the source (regenerates summaries and backlinks) |
+| `bundle_health` | Check bundle health, scale ceiling, missing summaries, and source reachability |
 
 ### Utility Tools
 
@@ -316,7 +347,9 @@ Use `dry_run: true` to preview changes without applying them.
 
 ## Open Knowledge Format
 
-OKF bundles are directories containing Markdown files with YAML frontmatter:
+OKF bundles are directories containing Markdown files with YAML frontmatter. The format implements the filing cabinet pattern with summary callouts and bidirectional backlinks.
+
+### Concept Format
 
 ```markdown
 ---
@@ -327,8 +360,14 @@ tags:
   - quickstart
   - tutorial
 resource: https://docs.example.com/getting-started
+backlinks:
+  - concepts/authentication
+  - concepts/installation
 ---
 # Getting Started
+
+> [!summary]
+> Learn how to install and configure the product in under 5 minutes.
 
 Your content here...
 ```
@@ -344,6 +383,62 @@ Your content here...
 - `tags` - Array of topic tags
 - `resource` - Original source URL
 - `timestamp` - Last modified date
+- `backlinks` - Array of concepts that link to this one (auto-generated)
+
+### Index Format
+
+The root `index.md` provides summary-first navigation:
+
+```markdown
+---
+okf_version: "0.1"
+total_concepts: 47
+total_tokens: 125000
+generated: 2024-01-15T10:30:00Z
+---
+# My Documentation Bundle
+
+## Concepts (47)
+
+- [[getting-started]] · Guide, quickstart, tutorial
+  Learn how to install and configure the product in under 5 minutes.
+
+- [[authentication]] · Guide, security, oauth
+  Configure OAuth2 authentication with support for multiple providers.
+```
+
+### Summary Callouts
+
+Each concept should have a summary callout after the title:
+
+```markdown
+> [!summary]
+> A 1-2 sentence summary (max 200 characters) for navigation.
+```
+
+Summaries are auto-generated during `crawl` and `import` from:
+1. Meta description (if present in source)
+2. First meaningful paragraph
+3. Document title (fallback)
+
+## Scale Ceiling & RAG Graduation
+
+The filing cabinet pattern works well for documentation sets up to ~100 concepts or ~400K tokens. Beyond this, query cost grows non-linearly because summary navigation produces too many candidates.
+
+**Check your bundle's scale:**
+```bash
+okf-cli inspect ./my-bundle
+```
+
+**When the ceiling is exceeded:**
+```bash
+okf-cli inspect ./my-bundle --recommendations
+```
+
+This outputs guidance on adding vector search (RAG) alongside the wiki structure:
+- Use header-based chunking (not token-count chunking)
+- Recommended local vector stores: DuckDB with vss extension, ChromaDB
+- Keep the wiki structure for synthesis questions; use vectors for precision lookups
 
 ## Development
 

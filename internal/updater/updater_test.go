@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/okfy/okf-mcp/internal/changelog"
-	"github.com/okfy/okf-mcp/internal/differ"
+	"github.com/chasedputnam/okf-cli/internal/changelog"
+	"github.com/chasedputnam/okf-cli/internal/differ"
 )
 
 func TestIsURL(t *testing.T) {

@@ -8,9 +8,9 @@ import (
 	"github.com/blevesearch/bleve/v2/analysis/analyzer/standard"
 	"github.com/blevesearch/bleve/v2/mapping"
 	"github.com/blevesearch/bleve/v2/search/query"
-	"github.com/okfy/okf-mcp/internal/graph"
-	"github.com/okfy/okf-mcp/internal/reader"
-	"github.com/okfy/okf-mcp/internal/types"
+	"github.com/chasedputnam/okf-cli/internal/graph"
+	"github.com/chasedputnam/okf-cli/internal/reader"
+	"github.com/chasedputnam/okf-cli/internal/types"
 )
 
 // SearchOptions configures search behavior.

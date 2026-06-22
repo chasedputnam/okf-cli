@@ -9,8 +9,8 @@ import (
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 
-	"github.com/okfy/okf-mcp/internal/crawler"
-	"github.com/okfy/okf-mcp/internal/types"
+	"github.com/chasedputnam/okf-cli/internal/crawler"
+	"github.com/chasedputnam/okf-cli/internal/types"
 )
 
 var crawlCmd = &cobra.Command{

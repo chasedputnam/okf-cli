@@ -11,10 +11,12 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/okfy/okf-mcp/internal/changelog"
-	"github.com/okfy/okf-mcp/internal/normalize"
-	"github.com/okfy/okf-mcp/internal/types"
-	"github.com/okfy/okf-mcp/internal/util"
+	"github.com/chasedputnam/okf-cli/internal/changelog"
+	"github.com/chasedputnam/okf-cli/internal/normalize"
+	"github.com/chasedputnam/okf-cli/internal/summarize"
+	"github.com/chasedputnam/okf-cli/internal/tokens"
+	"github.com/chasedputnam/okf-cli/internal/types"
+	"github.com/chasedputnam/okf-cli/internal/util"
 )
 
 // WriteOptions configures bundle writing.
@@ -40,6 +42,10 @@ type writtenConcept struct {
 	relPath     string
 	title       string
 	description string
+	summary     string
+	docType     string
+	tags        []string
+	tokenCount  int
 }
 
 // isReservedOKFPath checks if a path is a reserved OKF filename.
@@ -178,6 +184,11 @@ func yamlScalar(value string) string {
 
 // GenerateFrontmatter generates YAML frontmatter for a document.
 func GenerateFrontmatter(doc types.NormalizedDocument, timestamp string) string {
+	return GenerateFrontmatterWithBacklinks(doc, timestamp, nil)
+}
+
+// GenerateFrontmatterWithBacklinks generates YAML frontmatter with optional backlinks.
+func GenerateFrontmatterWithBacklinks(doc types.NormalizedDocument, timestamp string, backlinks []string) string {
 	resource := doc.Resource
 	if resource == "" {
 		resource = doc.SourcePath
@@ -201,10 +212,105 @@ func GenerateFrontmatter(doc types.NormalizedDocument, timestamp string) string 
 		lines = append(lines, "  []")
 	}
 	lines = append(lines, fmt.Sprintf("timestamp: %s", yamlScalar(timestamp)))
+
+	// Add backlinks if present
+	if len(backlinks) > 0 {
+		lines = append(lines, "backlinks:")
+		for _, bl := range backlinks {
+			lines = append(lines, fmt.Sprintf("  - %s", yamlScalar(bl)))
+		}
+	}
+
 	lines = append(lines, "---")
 	lines = append(lines, "")
 
 	return strings.Join(lines, "\n")
+}
+
+// injectSummaryCallout inserts a summary callout after the first heading.
+func injectSummaryCallout(markdown string, sum summarize.Summary) string {
+	if sum.Text == "" {
+		return markdown
+	}
+
+	callout := summarize.FormatCallout(sum)
+	lines := strings.Split(markdown, "\n")
+
+	// Find the first heading and insert callout after it
+	for i, line := range lines {
+		if strings.HasPrefix(strings.TrimSpace(line), "# ") {
+			// Insert callout after heading with blank line
+			before := strings.Join(lines[:i+1], "\n")
+			after := strings.Join(lines[i+1:], "\n")
+			return before + "\n\n" + callout + "\n" + after
+		}
+	}
+
+	// No heading found, prepend callout
+	return callout + "\n\n" + markdown
+}
+
+// computeBacklinks builds a map of output path -> list of paths that link to it.
+func computeBacklinks(docs []types.NormalizedDocument, sourceToOutput map[string]string) map[string][]string {
+	backlinks := make(map[string][]string)
+	linkRe := regexp.MustCompile(`\[([^\]]*)\]\(([^)\s]+)`)
+
+	for _, doc := range docs {
+		if doc.OutputPath == "" {
+			continue
+		}
+
+		// Find all links in this document
+		matches := linkRe.FindAllStringSubmatch(doc.Markdown, -1)
+		seen := make(map[string]bool)
+
+		for _, match := range matches {
+			if len(match) < 3 {
+				continue
+			}
+			href := match[2]
+
+			// Skip external links and anchors
+			if strings.HasPrefix(href, "http://") || strings.HasPrefix(href, "https://") ||
+				strings.HasPrefix(href, "//") || strings.HasPrefix(href, "#") {
+				continue
+			}
+
+			// Resolve target output path
+			var targetOutput string
+
+			if doc.Resource != "" {
+				// Try resolving as URL
+				canonical, err := util.CanonicalizeURL(href, doc.Resource)
+				if err == nil {
+					targetOutput = sourceToOutput[canonical]
+				}
+			}
+
+			if targetOutput == "" && doc.SourcePath != "" {
+				// Try resolving as relative path
+				dir := path.Dir(util.ToPosixPath(doc.SourcePath))
+				abs := path.Clean(path.Join(dir, href))
+				noHash := strings.Split(abs, "#")[0]
+				targetOutput = sourceToOutput[noHash]
+			}
+
+			// Add backlink if we found a valid target
+			if targetOutput != "" && targetOutput != doc.OutputPath && !seen[targetOutput] {
+				seen[targetOutput] = true
+				// Store the source path (without .md extension for cleaner display)
+				sourcePath := strings.TrimSuffix(doc.OutputPath, ".md")
+				backlinks[targetOutput] = append(backlinks[targetOutput], sourcePath)
+			}
+		}
+	}
+
+	// Sort backlinks for deterministic output
+	for target := range backlinks {
+		sort.Strings(backlinks[target])
+	}
+
+	return backlinks
 }
 
 // WriteOKFBundle writes documents as an OKF bundle.
@@ -219,8 +325,12 @@ func WriteOKFBundle(docs []types.NormalizedDocument, opts WriteOptions) ([]strin
 		timestamp = "2024-01-01T00:00:00.000Z"
 	}
 
+	// Compute backlinks from all outbound links
+	backlinks := computeBacklinks(docs, sourceToOutput)
+
 	written := make([]string, 0, len(docs))
 	conceptsByDir := make(map[string][]writtenConcept)
+	estimator := tokens.NewEstimator()
 
 	for i := range docs {
 		doc := &docs[i]
@@ -229,8 +339,18 @@ func WriteOKFBundle(docs []types.NormalizedDocument, opts WriteOptions) ([]strin
 		markdown := rewriteLinks(*doc, sourceToOutput)
 		markdown = WithTitle(doc.Title, markdown)
 
-		// Generate frontmatter
-		fm := GenerateFrontmatter(*doc, timestamp)
+		// Generate summary
+		description := normalize.DescriptionFromMarkdown(doc.Markdown)
+		sum := summarize.Extract(description, doc.Markdown, doc.Title)
+
+		// Inject summary callout at top of body (after title)
+		markdown = injectSummaryCallout(markdown, sum)
+
+		// Get backlinks for this document
+		docBacklinks := backlinks[doc.OutputPath]
+
+		// Generate frontmatter with backlinks
+		fm := GenerateFrontmatterWithBacklinks(*doc, timestamp, docBacklinks)
 
 		// Write file
 		outPath := filepath.Join(opts.OutDir, doc.OutputPath)
@@ -253,11 +373,15 @@ func WriteOKFBundle(docs []types.NormalizedDocument, opts WriteOptions) ([]strin
 		conceptsByDir[dir] = append(conceptsByDir[dir], writtenConcept{
 			relPath:     doc.OutputPath,
 			title:       doc.Title,
-			description: normalize.DescriptionFromMarkdown(doc.Markdown),
+			description: description,
+			summary:     sum.Text,
+			docType:     doc.Type,
+			tags:        doc.Tags,
+			tokenCount:  estimator.Count(content),
 		})
 	}
 
-	// Generate index files
+	// Generate index files with summaries
 	if err := writeIndexFiles(opts, conceptsByDir); err != nil {
 		return nil, err
 	}
@@ -272,7 +396,7 @@ func WriteOKFBundle(docs []types.NormalizedDocument, opts WriteOptions) ([]strin
 	return written, nil
 }
 
-// writeIndexFiles generates index.md files for each directory.
+// writeIndexFiles generates index.md files for each directory with summaries.
 func writeIndexFiles(opts WriteOptions, conceptsByDir map[string][]writtenConcept) error {
 	// Get all directories
 	dirs := make([]string, 0, len(conceptsByDir))
@@ -280,6 +404,16 @@ func writeIndexFiles(opts WriteOptions, conceptsByDir map[string][]writtenConcep
 		dirs = append(dirs, dir)
 	}
 	sort.Strings(dirs)
+
+	// Count total concepts and tokens for root index
+	totalConcepts := 0
+	totalTokens := 0
+	for _, concepts := range conceptsByDir {
+		totalConcepts += len(concepts)
+		for _, c := range concepts {
+			totalTokens += c.tokenCount
+		}
+	}
 
 	for _, dir := range dirs {
 		concepts := conceptsByDir[dir]
@@ -290,16 +424,36 @@ func writeIndexFiles(opts WriteOptions, conceptsByDir map[string][]writtenConcep
 		title := indexTitle(dir, opts)
 		var content strings.Builder
 
-		// Root index has okf_version frontmatter
+		// Root index has enhanced frontmatter
 		if dir == "." {
-			content.WriteString("---\nokf_version: \"0.1\"\n---\n\n")
+			content.WriteString("---\n")
+			content.WriteString("okf_version: \"0.1\"\n")
+			_, _ = fmt.Fprintf(&content, "total_concepts: %d\n", totalConcepts)
+			_, _ = fmt.Fprintf(&content, "total_tokens: %d\n", totalTokens)
+			_, _ = fmt.Fprintf(&content, "generated: %s\n", opts.Timestamp)
+			content.WriteString("---\n\n")
 		}
 
 		content.WriteString("# " + title + "\n\n")
+		_, _ = fmt.Fprintf(&content, "## Concepts (%d)\n\n", len(concepts))
 
 		for _, concept := range concepts {
 			relLink := path.Base(concept.relPath)
-			_, _ = fmt.Fprintf(&content, "- [%s](%s)\n", concept.title, relLink)
+			
+			// Format: - [[path]] · Type, tag1, tag2
+			//           Summary text
+			typeAndTags := concept.docType
+			if len(concept.tags) > 0 {
+				typeAndTags += ", " + strings.Join(concept.tags, ", ")
+			}
+			
+			_, _ = fmt.Fprintf(&content, "- [[%s]] · %s\n", strings.TrimSuffix(relLink, ".md"), typeAndTags)
+			
+			// Add summary on next line with indent
+			if concept.summary != "" {
+				_, _ = fmt.Fprintf(&content, "  %s\n", concept.summary)
+			}
+			content.WriteString("\n")
 		}
 
 		indexPath := filepath.Join(opts.OutDir, dir, "index.md")

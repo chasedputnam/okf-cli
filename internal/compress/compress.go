@@ -4,7 +4,7 @@ package compress
 import (
 	"encoding/json"
 
-	"github.com/okfy/okf-mcp/internal/tokens"
+	"github.com/chasedputnam/okf-cli/internal/tokens"
 )
 
 // Level defines compression aggressiveness.

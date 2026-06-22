@@ -7,8 +7,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/okfy/okf-mcp/internal/types"
-	"github.com/okfy/okf-mcp/internal/util"
+	"github.com/chasedputnam/okf-cli/internal/types"
+	"github.com/chasedputnam/okf-cli/internal/util"
 )
 
 // ExtractInternalLinks extracts internal markdown links from a concept's body.
