@@ -16,7 +16,10 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 )
 
-require github.com/blacktop/go-foundationmodels v0.1.8
+require (
+	github.com/blacktop/go-foundationmodels v0.1.8
+	github.com/yuin/goldmark v1.7.1
+)
 
 require (
 	github.com/RoaringBitmap/roaring/v2 v2.14.5 // indirect

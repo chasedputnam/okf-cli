@@ -13,8 +13,10 @@ import (
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 	"github.com/chasedputnam/okf-cli/internal/compress"
+	"github.com/chasedputnam/okf-cli/internal/config"
 	"github.com/chasedputnam/okf-cli/internal/scale"
 	"github.com/chasedputnam/okf-cli/internal/search"
+	"github.com/chasedputnam/okf-cli/internal/store"
 	"github.com/chasedputnam/okf-cli/internal/tokens"
 	"github.com/chasedputnam/okf-cli/internal/validate"
 )
@@ -35,6 +37,8 @@ type Server struct {
 	searchMu       sync.RWMutex
 	mcpServer      *server.MCPServer
 	stats          *CompressionStats
+
+	store *store.Store // unified Canon + Reference store for authority-aware tools
 }
 
 // NewServer creates a new MCP server.
@@ -62,8 +66,17 @@ func NewServer(opts ServerOptions) (*Server, error) {
 		stats:          NewCompressionStats(),
 	}
 
+	// Load the unified store for authority-aware (Canon) tools. A failure here is
+	// non-fatal: the server still serves the Reference tier.
+	if cfg, cerr := config.Load(opts.BundleDir); cerr == nil {
+		if st, serr := store.Load(opts.BundleDir, cfg); serr == nil {
+			s.store = st
+		}
+	}
+
 	s.mcpServer = server.NewMCPServer(name, "0.1.0")
 	s.registerTools()
+	s.registerCanonTools()
 
 	return s, nil
 }
@@ -77,6 +90,9 @@ func (s *Server) Serve() error {
 func (s *Server) Close() error {
 	s.searchMu.Lock()
 	defer s.searchMu.Unlock()
+	if s.store != nil {
+		_ = s.store.Close()
+	}
 	return s.search.Close()
 }
 

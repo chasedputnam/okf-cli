@@ -4,9 +4,36 @@
 <img width="704" alt="okf-cli_github" src="https://github.com/user-attachments/assets/dcb42aa0-9ad5-4c05-810c-db8a19bda9b1" />
 </p>
 
-OKF-CLI converts documentation websites and local Markdown folders into extended Open Knowledge Format (OKF) bundles. These bundles implement a filing cabinet concept architecture pattern for AI agents, providing durable structured artifacts with summary-first navigation that scales sublinearly with corpus size.
+**okf-cli is a wholistic memory and context tool for AI agents.** It is a single Go binary that gives an agent two kinds of knowledge over one substrate — plain Markdown + YAML frontmatter, versioned in Git:
 
-## Why?
+- **Canon** — your team's *authoritative* knowledge: requirements, decisions, designs, roadmaps, and prompts, captured as typed Markdown, validated against real standards, and enforced in CI. This is the durable system of record — **what is true.** Agents *cite* it instead of re-litigating it.
+- **Reference** — *ingested* documentation (crawled sites, imported repos) rendered as a navigable Open Knowledge Format (OKF) "filing cabinet": abundant, summarized, and searchable supporting material — **how things work.**
+
+> **The intent:** an agent's only real constraint is its context window. So the job is choosing which true, relevant tokens to put in it. okf-cli separates the two properties that vector databases conflate — **authority** (is this the canonical truth the team agreed to?) and **discoverability** (can the right piece be found at the right moment?) — and serves both to agents over MCP.
+>
+> **Memory is Canon. Context is the budgeted projection of Canon + Reference. AI lives only in the projection. The substrate is Git.**
+
+### Philosophy
+
+- **Authority-first.** Canon leads and is enforced; Reference supports it. At equal relevance, authoritative artifacts rank ahead of ingested docs, and every Canon result carries a verifiable citation and its lifecycle status.
+- **Deterministic where it counts.** The authority path — typing, validation, relationship integrity, the gate — is a pure function of repository state with **no LLM and no network** (a build-failing test enforces this). AI is confined to the discovery/projection layer, where it can summarize and rank but never decide what is authoritative.
+- **No database, no lock-in.** The source of truth is human- and agent-readable Markdown in Git. Search indexes, the relationship graph, and summaries are *derived projections* you can delete and rebuild at will.
+- **Catch problems at write time.** Bad normative knowledge is rejected by a CI gate before it lands; ingested reference docs are treated permissively. Strictness matches the cost of being wrong.
+
+### The agent loop
+
+**Discover** (fuzzy full-text search across both tiers) → **ground** (resolve hits to the authoritative, status-checked Canon artifact, following supersedes to the current successor) → **assemble** (pack into a token budget, Canon-first, with normative requirement text preserved verbatim). The agent recalls fuzzily, then stands on truth.
+
+### Use cases
+
+- **Stop agents (and people) from violating decisions you already made.** Capture ADRs and requirements as Canon; the agent retrieves the *why* and cites it.
+- **Make a large docs corpus usable as agent memory** without standing up a vector store — crawl or import it into a Reference bundle and serve it over MCP.
+- **Enforce requirement quality in CI** — `okf-cli gate` checks BCP-14 / ISO 29148 / EARS conformance and relationship integrity, emitting SARIF.
+- **Promote scattered docs into authoritative artifacts** as your knowledge matures, and graduate the fuzzy half to external RAG when it outgrows the filing cabinet — while Canon always stays canonical in the repo.
+
+The Canon authority model is a faithful Go port of the **Requirements-as-Code** (rac-core) engine; the two tools interoperate through the Open Knowledge Format. For the full design, see [ARCHITECTURE.md](./ARCHITECTURE.md).
+
+## Why a "filing cabinet"?
 Current AI memory systems can be broken down into three types:
 
 - **Notebook**: Built for capture, drafting, and personal connection-making. 
@@ -37,6 +64,44 @@ OKF bundles can be extended to provide functionality as a "filing cabinet" for A
 - **Token-aware retrieval**: Tools support token budgets and compression levels to fit responses within context windows
 
 This architecture allows AI agents to efficiently navigate large documentation sets by reading summaries first, then drilling into specific concepts as needed.
+
+## Canon: authoritative agent memory
+
+The filing cabinet handles *reference* knowledge — abundant docs where recall matters more than perfection. But the knowledge that actually steers an agent — *why* you chose an approach, *what* must hold — has a different lifecycle and a higher cost of being wrong. okf-cli holds that as **Canon**: typed, validated, enforced artifacts that live alongside Reference in the same store.
+
+- **Five typed artifacts** — Requirement, Decision, Design, Roadmap, Prompt. Type is *inferred* from the `##` sections an artifact contains, not declared.
+- **Minted identity** — every Canon artifact carries a stable opaque ID (`<repo-key>-<12-char Crockford base32>`); cross-references resolve through an alias index, so human-readable links like `ADR-002` keep working.
+- **Typed relationships** — `## Related <Type>` / `## Supersedes` edges with integrity checks: broken / ambiguous / self references, edge legality, target-type range, status-consistency (a live artifact may not point at a retired one, except via supersedes), and cycle detection.
+- **Standards-mapped validation** — requirement quality is checked against **BCP-14 / RFC 8174** (only uppercase MUST/SHALL/SHOULD carry normative weight), **ISO/IEC/IEEE 29148** (singular requirements), and **EARS** patterns.
+- **Lifecycle + recency** — a `## Status` per type (e.g. Proposed/Accepted/Superseded), with recency derived from Git history rather than stored timestamps.
+- **A blocking gate** — `okf-cli gate` runs validation + relationship integrity, classifies findings as blocking or advisory per a governed policy, and emits SARIF for CI.
+
+A store with **no Canon behaves exactly like the original okf-cli** — adopting the authority layer is additive. For the full picture, see [ARCHITECTURE.md](./ARCHITECTURE.md).
+
+### Authoring Canon
+
+```bash
+# Configure the store (optional; sensible defaults otherwise)
+mkdir -p .okf
+cat > .okf/config.yaml <<'EOF'
+repository_key: OKF
+canon_roots: [canon]
+ticketing:
+  provider: github
+EOF
+
+# Scaffold a typed artifact with a freshly minted ID
+okf-cli new decision canon/adr-001-use-bleve.md --title "Use Bleve for search"
+
+# Edit the sections, then check it (and the whole corpus)
+okf-cli gate .
+
+# Inspect the typed relationship graph and its health
+okf-cli relationships . --validate --summary
+
+# Promote an ingested Reference doc into a typed Canon draft
+okf-cli promote guides/caching.md --type decision
+```
 
 ## Installation
 
@@ -290,18 +355,87 @@ Run an offline demo with the bundled example.
 okf-cli demo [--serve]
 ```
 
+### Canon commands
+
+These operate on the **authority** tier (typed artifacts under the configured `canon_roots`). They are no-ops on a pure-Reference store.
+
+#### `okf-cli new <type> <path>`
+
+Scaffold a typed Canon artifact (`requirement`, `decision`, `design`, `roadmap`, `prompt`) with a freshly minted opaque ID and the type's required + recommended sections.
+
+```bash
+okf-cli new decision canon/adr-001-use-bleve.md --title "Use Bleve for search"
+okf-cli new requirement canon/req-search.md --store .
+```
+
+#### `okf-cli gate [store]`
+
+Run the unified authority gate: validate every Canon artifact, check relationship integrity, and classify findings as blocking or advisory per the store's `enforcement` policy. Exits non-zero if any blocking finding exists.
+
+```bash
+okf-cli gate .                 # human output
+okf-cli gate . --json          # machine-readable result
+okf-cli gate . --sarif         # SARIF 2.1.0 for CI required-checks
+```
+
+#### `okf-cli relationships [store]`
+
+Report and validate the typed relationship graph.
+
+```bash
+okf-cli relationships .                       # list edges
+okf-cli relationships . --validate            # + integrity issues (fails on errors)
+okf-cli relationships . --summary             # + coverage / orphans / broken counts
+okf-cli relationships . --validate --json
+```
+
+#### `okf-cli promote <concept> --type <type>`
+
+Promote an ingested Reference concept into a typed Canon draft — mints an ID, scaffolds the type's sections, and seeds the concept's content into the primary prose section. The draft is then validated so it is never silently treated as authoritative.
+
+```bash
+okf-cli promote guides/caching.md --type decision
+```
+
+#### `okf-cli rebuild [store]`
+
+Regenerate all derived indexes (full-text search, relationship graph) from the Markdown source of truth. Derived indexes are caches — deleting and rebuilding them never affects the canonical files.
+
+```bash
+okf-cli rebuild .
+```
+
+#### `okf-cli export [store]`
+
+Export the **Reference** tier for graduation to an external RAG or graph backend when it outgrows the in-repo filing cabinet. Canon stays in the repo as the source of truth and is never exported as documents.
+
+```bash
+okf-cli export . --documents        # Reference concepts as JSONL (for RAG)
+okf-cli export . --graph            # relationship graph as JSON
+okf-cli export . --documents --out refs.jsonl
+```
+
 ## MCP Tools
 
-When serving a bundle via MCP, the following tools are available to AI agents:
+When serving a bundle via MCP, the following tools are available to AI agents. The server is **read-only** — all mutation happens via the CLI and Git PR review.
+
+### Canon (authority) Tools
+
+| Tool | Description |
+|------|-------------|
+| `get_artifact` | Read one authoritative Canon artifact by ID, with its type, status, relationships, and citation |
+| `find_decisions` | Find Canon decisions related to a topic |
+| `get_related` | Typed relationships for an artifact: outgoing references, incoming references, and a bounded multi-hop neighborhood |
+| `get_summary` | Summarize the Canon corpus: counts by type and lifecycle status |
 
 ### Search & Read Tools
 
 | Tool | Description |
 |------|-------------|
-| `search_concepts` | Full-text search across concepts with token budget control |
+| `search_concepts` | Full-text search across both tiers with token budget control |
 | `read_concept` | Read a specific concept's content with compression options |
 | `get_neighbors` | Find related concepts via outbound links and backlinks |
-| `get_context` | Smart context assembly for a topic with token budget |
+| `get_context` | Authority-aware context assembly (discover → ground → assemble) within a token budget; Canon ranks first and carries citations, reference items are marked `derived` |
 | `list_types` | List all concept types in the bundle |
 | `list_tags` | List all tags in the bundle |
 | `bundle_summary` | Get bundle statistics, scale metrics, and index content |

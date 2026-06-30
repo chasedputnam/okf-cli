@@ -34,6 +34,13 @@ func (s *Server) handleGetContext(ctx context.Context, request mcp.CallToolReque
 		compressionLevel = compress.ParseLevel(compressionStr)
 	}
 
+	// When a Canon store is present, use the authority-aware
+	// discover -> ground -> assemble loop so Canon is ranked first and grounded
+	// with citations. Reference-only stores keep the legacy assembly.
+	if s.store != nil && s.store.HasCanon() {
+		return s.contextUnified(query, tokenBudget, compressionStr)
+	}
+
 	result := ctxpkg.Assemble(s.search, ctxpkg.AssemblyOptions{
 		Query:            query,
 		TokenBudget:      tokenBudget,
