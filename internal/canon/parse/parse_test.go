@@ -146,9 +146,9 @@ func TestParse_RequirementsOutsideSectionIgnored(t *testing.T) {
 
 func TestNormalize(t *testing.T) {
 	cases := map[string]string{
-		"Related Decisions":   "related decisions",
-		"  STATUS  ":          "status",
-		"Related   Tickets":   "related tickets",
+		"Related Decisions": "related decisions",
+		"  STATUS  ":        "status",
+		"Related   Tickets": "related tickets",
 	}
 	for in, want := range cases {
 		if got := Normalize(in); got != want {

@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/chasedputnam/okf-cli/internal/tokens"
+	"github.com/chasedputnam/memphis/internal/tokens"
 )
 
 // Thresholds for scale ceiling detection (from article research).

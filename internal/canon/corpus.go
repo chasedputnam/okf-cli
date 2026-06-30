@@ -10,13 +10,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/chasedputnam/okf-cli/internal/canon/artifacts"
-	"github.com/chasedputnam/okf-cli/internal/canon/classify"
-	"github.com/chasedputnam/okf-cli/internal/canon/frontmatter"
-	"github.com/chasedputnam/okf-cli/internal/canon/identity"
-	"github.com/chasedputnam/okf-cli/internal/canon/model"
-	"github.com/chasedputnam/okf-cli/internal/canon/parse"
-	"github.com/chasedputnam/okf-cli/internal/config"
+	"github.com/chasedputnam/memphis/internal/canon/artifacts"
+	"github.com/chasedputnam/memphis/internal/canon/classify"
+	"github.com/chasedputnam/memphis/internal/canon/frontmatter"
+	"github.com/chasedputnam/memphis/internal/canon/identity"
+	"github.com/chasedputnam/memphis/internal/canon/model"
+	"github.com/chasedputnam/memphis/internal/canon/parse"
+	"github.com/chasedputnam/memphis/internal/config"
 )
 
 // Artifact is one loaded Canon artifact with its derived classification.

@@ -1,9 +1,9 @@
 ---
 okf_version: "1.0"
 ---
-# OKF-CLI Documentation
+# Memphis Documentation
 
-Welcome to the OKF-CLI documentation bundle. This bundle contains guides and references for using OKF-CLI to convert documentation into Open Knowledge Format bundles.
+Welcome to the Memphis documentation bundle. This bundle contains guides and references for using Memphis to convert documentation into Open Knowledge Format bundles.
 
 ## Contents
 

@@ -10,8 +10,8 @@ import (
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 
-	"github.com/chasedputnam/okf-cli/internal/differ"
-	"github.com/chasedputnam/okf-cli/internal/updater"
+	"github.com/chasedputnam/memphis/internal/differ"
+	"github.com/chasedputnam/memphis/internal/updater"
 )
 
 var updateCmd = &cobra.Command{
@@ -41,7 +41,7 @@ func init() {
 	updateCmd.Flags().String("summarize", "", "Summarization mode override: extractive or llm (defaults to changelog setting)")
 	updateCmd.Flags().String("summarize-algorithm", "", "Extractive algorithm override (defaults to changelog setting)")
 	updateCmd.Flags().String("language", "", "Language override for summarization (defaults to changelog setting)")
-	updateCmd.Flags().String("edmundson-config", "", "Path to edmundson.config YAML (defaults to bundle/edmundson.config or ~/.config/okf-cli/edmundson.config)")
+	updateCmd.Flags().String("edmundson-config", "", "Path to edmundson.config YAML (defaults to bundle/edmundson.config or ~/.config/memphis/edmundson.config)")
 
 	rootCmd.AddCommand(updateCmd)
 }
@@ -98,7 +98,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	// Print results
 	fmt.Println()
 	if dryRun {
-		color.Cyan("okf-cli update (dry run)")
+		color.Cyan("memphis update (dry run)")
 		fmt.Printf("Bundle: %s\n", bundlePath)
 		fmt.Printf("Would add: %d files\n", result.Added)
 		fmt.Printf("Would modify: %d files\n", result.Modified)
@@ -106,7 +106,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
-	color.Green("okf-cli update")
+	color.Green("memphis update")
 	fmt.Printf("Bundle: %s\n", bundlePath)
 	fmt.Printf("Added: %d files\n", result.Added)
 	fmt.Printf("Modified: %d files\n", result.Modified)
@@ -131,7 +131,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 // so the two commands feel consistent.
 func makeUpdateSummarizeProgressHandler() func(index, total int, source string) {
 	return func(index, total int, source string) {
-		fmt.Fprintf(os.Stderr, "\rokf-cli update: summarizing %d/%d", index, total)
+		fmt.Fprintf(os.Stderr, "\rmemphis update: summarizing %d/%d", index, total)
 		if index == total {
 			fmt.Fprintln(os.Stderr)
 		}
@@ -141,7 +141,7 @@ func makeUpdateSummarizeProgressHandler() func(index, total int, source string) 
 // makeUpdateSummarizeWarningHandler logs per-file summarization warnings.
 func makeUpdateSummarizeWarningHandler() func(string, string) {
 	return func(path, message string) {
-		color.Yellow("okf-cli update: warning: %s: %s", path, message)
+		color.Yellow("memphis update: warning: %s: %s", path, message)
 	}
 }
 
@@ -154,13 +154,13 @@ func makeUpdateProgressHandler(isTTY bool) func(phase string, message string) {
 
 		switch phase {
 		case "fetching":
-			fmt.Fprintf(os.Stderr, "%sokf-cli update: %s\n", clear, message)
+			fmt.Fprintf(os.Stderr, "%smemphis update: %s\n", clear, message)
 		case "diffing":
-			fmt.Fprintf(os.Stderr, "%sokf-cli update: %s\n", clear, message)
+			fmt.Fprintf(os.Stderr, "%smemphis update: %s\n", clear, message)
 		case "applying":
-			fmt.Fprintf(os.Stderr, "%sokf-cli update: %s\n", clear, message)
+			fmt.Fprintf(os.Stderr, "%smemphis update: %s\n", clear, message)
 		case "warning":
-			color.Yellow("%sokf-cli update: warning: %s", clear, message)
+			color.Yellow("%smemphis update: warning: %s", clear, message)
 		}
 	}
 }

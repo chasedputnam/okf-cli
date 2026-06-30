@@ -5,13 +5,13 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/chasedputnam/okf-cli/internal/canon/model"
-	"github.com/chasedputnam/okf-cli/internal/canon/validate"
-	"github.com/chasedputnam/okf-cli/internal/config"
+	"github.com/chasedputnam/memphis/internal/canon/model"
+	"github.com/chasedputnam/memphis/internal/canon/validate"
+	"github.com/chasedputnam/memphis/internal/config"
 )
 
 // Conformance fixtures are verbatim copies of real rac-core artifacts under
-// testdata/conformance. These tests pin okf-cli's Canon engine to rac-core's
+// testdata/conformance. These tests pin memphis's Canon engine to rac-core's
 // actual on-disk format, guarding against semantic drift between the two
 // implementations (the largest risk identified in the design).
 

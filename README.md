@@ -1,15 +1,15 @@
-# OKF-CLI
+# Memphis
 
 <p align="center">
-<img width="704" alt="okf-cli_github" src="https://github.com/user-attachments/assets/dcb42aa0-9ad5-4c05-810c-db8a19bda9b1" />
+<img width="704" alt="memphis_github" src="https://github.com/user-attachments/assets/dcb42aa0-9ad5-4c05-810c-db8a19bda9b1" />
 </p>
 
-**okf-cli is a wholistic memory and context tool for AI agents.** It is a single Go binary that gives an agent two kinds of knowledge over one substrate — plain Markdown + YAML frontmatter, versioned in Git:
+**memphis is a wholistic memory and context tool for AI agents.** It is a single Go binary that gives an agent two kinds of knowledge over one substrate — plain Markdown + YAML frontmatter, versioned in Git:
 
 - **Canon** — your team's *authoritative* knowledge: requirements, decisions, designs, roadmaps, and prompts, captured as typed Markdown, validated against real standards, and enforced in CI. This is the durable system of record — **what is true.** Agents *cite* it instead of re-litigating it.
 - **Reference** — *ingested* documentation (crawled sites, imported repos) rendered as a navigable Open Knowledge Format (OKF) "filing cabinet": abundant, summarized, and searchable supporting material — **how things work.**
 
-> **The intent:** an agent's only real constraint is its context window. So the job is choosing which true, relevant tokens to put in it. okf-cli separates the two properties that vector databases conflate — **authority** (is this the canonical truth the team agreed to?) and **discoverability** (can the right piece be found at the right moment?) — and serves both to agents over MCP.
+> **The intent:** an agent's only real constraint is its context window. So the job is choosing which true, relevant tokens to put in it. memphis separates the two properties that vector databases conflate — **authority** (is this the canonical truth the team agreed to?) and **discoverability** (can the right piece be found at the right moment?) — and serves both to agents over MCP.
 >
 > **Memory is Canon. Context is the budgeted projection of Canon + Reference. AI lives only in the projection. The substrate is Git.**
 
@@ -28,7 +28,7 @@
 
 - **Stop agents (and people) from violating decisions you already made.** Capture ADRs and requirements as Canon; the agent retrieves the *why* and cites it.
 - **Make a large docs corpus usable as agent memory** without standing up a vector store — crawl or import it into a Reference bundle and serve it over MCP.
-- **Enforce requirement quality in CI** — `okf-cli gate` checks BCP-14 / ISO 29148 / EARS conformance and relationship integrity, emitting SARIF.
+- **Enforce requirement quality in CI** — `memphis gate` checks BCP-14 / ISO 29148 / EARS conformance and relationship integrity, emitting SARIF.
 - **Promote scattered docs into authoritative artifacts** as your knowledge matures, and graduate the fuzzy half to external RAG when it outgrows the filing cabinet — while Canon always stays canonical in the repo.
 
 The Canon authority model is a faithful Go port of the **Requirements-as-Code** (rac-core) engine; the two tools interoperate through the Open Knowledge Format. For the full design, see [ARCHITECTURE.md](./ARCHITECTURE.md).
@@ -67,16 +67,16 @@ This architecture allows AI agents to efficiently navigate large documentation s
 
 ## Canon: authoritative agent memory
 
-The filing cabinet handles *reference* knowledge — abundant docs where recall matters more than perfection. But the knowledge that actually steers an agent — *why* you chose an approach, *what* must hold — has a different lifecycle and a higher cost of being wrong. okf-cli holds that as **Canon**: typed, validated, enforced artifacts that live alongside Reference in the same store.
+The filing cabinet handles *reference* knowledge — abundant docs where recall matters more than perfection. But the knowledge that actually steers an agent — *why* you chose an approach, *what* must hold — has a different lifecycle and a higher cost of being wrong. memphis holds that as **Canon**: typed, validated, enforced artifacts that live alongside Reference in the same store.
 
 - **Five typed artifacts** — Requirement, Decision, Design, Roadmap, Prompt. Type is *inferred* from the `##` sections an artifact contains, not declared.
 - **Minted identity** — every Canon artifact carries a stable opaque ID (`<repo-key>-<12-char Crockford base32>`); cross-references resolve through an alias index, so human-readable links like `ADR-002` keep working.
 - **Typed relationships** — `## Related <Type>` / `## Supersedes` edges with integrity checks: broken / ambiguous / self references, edge legality, target-type range, status-consistency (a live artifact may not point at a retired one, except via supersedes), and cycle detection.
 - **Standards-mapped validation** — requirement quality is checked against **BCP-14 / RFC 8174** (only uppercase MUST/SHALL/SHOULD carry normative weight), **ISO/IEC/IEEE 29148** (singular requirements), and **EARS** patterns.
 - **Lifecycle + recency** — a `## Status` per type (e.g. Proposed/Accepted/Superseded), with recency derived from Git history rather than stored timestamps.
-- **A blocking gate** — `okf-cli gate` runs validation + relationship integrity, classifies findings as blocking or advisory per a governed policy, and emits SARIF for CI.
+- **A blocking gate** — `memphis gate` runs validation + relationship integrity, classifies findings as blocking or advisory per a governed policy, and emits SARIF for CI.
 
-A store with **no Canon behaves exactly like the original okf-cli** — adopting the authority layer is additive. For the full picture, see [ARCHITECTURE.md](./ARCHITECTURE.md).
+A store with **no Canon behaves exactly like the original memphis** — adopting the authority layer is additive. For the full picture, see [ARCHITECTURE.md](./ARCHITECTURE.md).
 
 ### Authoring Canon
 
@@ -91,41 +91,41 @@ ticketing:
 EOF
 
 # Scaffold a typed artifact with a freshly minted ID
-okf-cli new decision canon/adr-001-use-bleve.md --title "Use Bleve for search"
+memphis new decision canon/adr-001-use-bleve.md --title "Use Bleve for search"
 
 # Edit the sections, then check it (and the whole corpus)
-okf-cli gate .
+memphis gate .
 
 # Inspect the typed relationship graph and its health
-okf-cli relationships . --validate --summary
+memphis relationships . --validate --summary
 
 # Promote an ingested Reference doc into a typed Canon draft
-okf-cli promote guides/caching.md --type decision
+memphis promote guides/caching.md --type decision
 ```
 
 ## Installation
 
 ### Download Binary
 
-Download the latest binary for your platform from the [releases page](https://github.com/okf-cli/okf-mcp/releases).
+Download the latest binary for your platform from the [releases page](https://github.com/chasedputnam/memphis/releases).
 
 ### Build from Source
 
 ```bash
-go install github.com/chasedputnam/okf-cli/cmd/okf-cli@latest
+go install github.com/chasedputnam/memphis/cmd/memphis@latest
 ```
 
 Or clone and build:
 
 ```bash
-git clone https://github.com/chasedputnam/okf-cli.git
-cd okf-cli
+git clone https://github.com/chasedputnam/memphis.git
+cd memphis
 make build
 ```
 
 ### Apple Intelligence (optional)
 
-On macOS 26 Tahoe with Apple Silicon, okf-cli can summarize directly through
+On macOS 26 Tahoe with Apple Silicon, memphis can summarize directly through
 Apple's on-device Foundation Models. The provider is opt-in via the `applefm`
 build tag and requires a one-time Swift shim compilation. See
 [docs/APPLE_INTELLIGENCE.md](docs/APPLE_INTELLIGENCE.md) for the build
@@ -136,13 +136,13 @@ workflow.
 ### 1. Crawl a Documentation Site
 
 ```bash
-okf-cli crawl https://docs.example.com --out ./my-bundle
+memphis crawl https://docs.example.com --out ./my-bundle
 ```
 
 ### 2. Or Import Local Markdown
 
 ```bash
-okf-cli import ./docs --out ./my-bundle
+memphis import ./docs --out ./my-bundle
 ```
 
 #### Ex: Enable an Existing Repository
@@ -151,10 +151,10 @@ Turn any repository with scattered Markdown files into a searchable knowledge bu
 
 ```bash
 # Import all Markdown files from a repository
-okf-cli import ~/repo/my-project --out ~/repo/my-project/.okf --source-name "My Project"
+memphis import ~/repo/my-project --out ~/repo/my-project/.okf --source-name "My Project"
 
 # Filter to specific directories or patterns
-okf-cli import ~/repo/my-project \
+memphis import ~/repo/my-project \
   --out ~/repo/my-project/.okf \
   --source-name "My Project" \
   --include "docs/**/*.md" \
@@ -167,14 +167,14 @@ okf-cli import ~/repo/my-project \
 echo ".okf/" >> ~/repo/my-project/.gitignore
 
 # Serve to AI agents
-okf-cli serve ~/repo/my-project/.okf --mcp
+memphis serve ~/repo/my-project/.okf --mcp
 ```
 
 This creates a `.okf` bundle inside your repository that indexes all documentation, READMEs, ADRs, and other Markdown content. AI agents can then search and navigate your project's knowledge base.
 
 **Example: Enable a monorepo**
 ```bash
-okf-cli import ~/repo/cloud-platform \
+memphis import ~/repo/cloud-platform \
   --out ~/repo/cloud-platform/.okf \
   --source-name "Cloud Platform" \
   --include "**/docs/**/*.md" \
@@ -188,19 +188,19 @@ okf-cli import ~/repo/cloud-platform \
 **Keep the bundle updated**
 ```bash
 # Re-import when docs change
-okf-cli update ~/repo/my-project/.okf --force
+memphis update ~/repo/my-project/.okf --force
 ```
 
 ### 4. Validate Your Bundle
 
 ```bash
-okf-cli validate ./my-bundle
+memphis validate ./my-bundle
 ```
 
 ### 5. Serve via MCP
 
 ```bash
-okf-cli serve ./my-bundle --mcp
+memphis serve ./my-bundle --mcp
 ```
 
 ### 6. Configure Your AI Client
@@ -211,7 +211,7 @@ Add to your MCP client configuration (e.g., Claude Desktop):
 {
   "mcpServers": {
     "my-docs": {
-      "command": "okf-cli",
+      "command": "memphis",
       "args": ["serve", "./my-bundle", "--mcp"]
     }
   }
@@ -220,12 +220,12 @@ Add to your MCP client configuration (e.g., Claude Desktop):
 
 ## Commands
 
-### `okf-cli crawl <url>`
+### `memphis crawl <url>`
 
 Crawl a documentation website and create an OKF bundle.
 
 ```bash
-okf-cli crawl https://docs.example.com --out ./bundle [options]
+memphis crawl https://docs.example.com --out ./bundle [options]
 ```
 
 Options:
@@ -240,12 +240,12 @@ Options:
 - `--force` - Overwrite output directory
 - `--dry-run` - List pages without crawling
 
-### `okf-cli import <path>`
+### `memphis import <path>`
 
 Import local files into an OKF bundle.
 
 ```bash
-okf-cli import ./docs --out ./bundle [options]
+memphis import ./docs --out ./bundle [options]
 ```
 
 Options:
@@ -261,12 +261,12 @@ Options:
 
 See [Summarization](#summarization) for what each mode and algorithm does, and how to configure LLM providers.
 
-### `okf-cli validate <bundle>`
+### `memphis validate <bundle>`
 
 Validate an OKF bundle structure and health.
 
 ```bash
-okf-cli validate ./bundle [--json]
+memphis validate ./bundle [--json]
 ```
 
 Validates:
@@ -277,13 +277,13 @@ Validates:
 
 Missing summaries produce warnings (not errors) for backward compatibility with older bundles.
 
-### `okf-cli inspect <bundle>`
+### `memphis inspect <bundle>`
 
 Display bundle statistics and scale metrics.
 
 ```bash
-okf-cli inspect ./bundle
-okf-cli inspect ./bundle --recommendations
+memphis inspect ./bundle
+memphis inspect ./bundle --recommendations
 ```
 
 Output includes:
@@ -297,12 +297,12 @@ Options:
 
 When a bundle exceeds ~100 concepts or ~400K tokens, `inspect` warns that the filing cabinet pattern is approaching its scale ceiling. Use `--recommendations` to see guidance on adding vector search.
 
-### `okf-cli serve <bundle>`
+### `memphis serve <bundle>`
 
 Start an MCP server for a bundle.
 
 ```bash
-okf-cli serve ./bundle --mcp
+memphis serve ./bundle --mcp
 ```
 
 Options:
@@ -310,12 +310,12 @@ Options:
 - `--name` - Server name
 - `--max-result-chars` - Maximum characters in tool results (default: 12000)
 
-### `okf-cli update <bundle>`
+### `memphis update <bundle>`
 
 Update an existing OKF bundle from its original source.
 
 ```bash
-okf-cli update ./bundle [options]
+memphis update ./bundle [options]
 ```
 
 The source is automatically read from the bundle's `changelog.txt` file (created during crawl or import). You can override it with the `--source` flag.
@@ -339,80 +339,80 @@ When omitted, summarization flags default to whatever was last recorded in the b
 Example workflow:
 ```bash
 # Initial crawl
-okf-cli crawl https://docs.example.com --out ./my-bundle
+memphis crawl https://docs.example.com --out ./my-bundle
 
 # Later, update with changes
-okf-cli update ./my-bundle --dry-run  # Preview changes
-okf-cli update ./my-bundle --force    # Apply all changes
-okf-cli update ./my-bundle            # Interactive mode
+memphis update ./my-bundle --dry-run  # Preview changes
+memphis update ./my-bundle --force    # Apply all changes
+memphis update ./my-bundle            # Interactive mode
 ```
 
-### `okf-cli demo`
+### `memphis demo`
 
 Run an offline demo with the bundled example.
 
 ```bash
-okf-cli demo [--serve]
+memphis demo [--serve]
 ```
 
 ### Canon commands
 
 These operate on the **authority** tier (typed artifacts under the configured `canon_roots`). They are no-ops on a pure-Reference store.
 
-#### `okf-cli new <type> <path>`
+#### `memphis new <type> <path>`
 
 Scaffold a typed Canon artifact (`requirement`, `decision`, `design`, `roadmap`, `prompt`) with a freshly minted opaque ID and the type's required + recommended sections.
 
 ```bash
-okf-cli new decision canon/adr-001-use-bleve.md --title "Use Bleve for search"
-okf-cli new requirement canon/req-search.md --store .
+memphis new decision canon/adr-001-use-bleve.md --title "Use Bleve for search"
+memphis new requirement canon/req-search.md --store .
 ```
 
-#### `okf-cli gate [store]`
+#### `memphis gate [store]`
 
 Run the unified authority gate: validate every Canon artifact, check relationship integrity, and classify findings as blocking or advisory per the store's `enforcement` policy. Exits non-zero if any blocking finding exists.
 
 ```bash
-okf-cli gate .                 # human output
-okf-cli gate . --json          # machine-readable result
-okf-cli gate . --sarif         # SARIF 2.1.0 for CI required-checks
+memphis gate .                 # human output
+memphis gate . --json          # machine-readable result
+memphis gate . --sarif         # SARIF 2.1.0 for CI required-checks
 ```
 
-#### `okf-cli relationships [store]`
+#### `memphis relationships [store]`
 
 Report and validate the typed relationship graph.
 
 ```bash
-okf-cli relationships .                       # list edges
-okf-cli relationships . --validate            # + integrity issues (fails on errors)
-okf-cli relationships . --summary             # + coverage / orphans / broken counts
-okf-cli relationships . --validate --json
+memphis relationships .                       # list edges
+memphis relationships . --validate            # + integrity issues (fails on errors)
+memphis relationships . --summary             # + coverage / orphans / broken counts
+memphis relationships . --validate --json
 ```
 
-#### `okf-cli promote <concept> --type <type>`
+#### `memphis promote <concept> --type <type>`
 
 Promote an ingested Reference concept into a typed Canon draft — mints an ID, scaffolds the type's sections, and seeds the concept's content into the primary prose section. The draft is then validated so it is never silently treated as authoritative.
 
 ```bash
-okf-cli promote guides/caching.md --type decision
+memphis promote guides/caching.md --type decision
 ```
 
-#### `okf-cli rebuild [store]`
+#### `memphis rebuild [store]`
 
 Regenerate all derived indexes (full-text search, relationship graph) from the Markdown source of truth. Derived indexes are caches — deleting and rebuilding them never affects the canonical files.
 
 ```bash
-okf-cli rebuild .
+memphis rebuild .
 ```
 
-#### `okf-cli export [store]`
+#### `memphis export [store]`
 
 Export the **Reference** tier for graduation to an external RAG or graph backend when it outgrows the in-repo filing cabinet. Canon stays in the repo as the source of truth and is never exported as documents.
 
 ```bash
-okf-cli export . --documents        # Reference concepts as JSONL (for RAG)
-okf-cli export . --graph            # relationship graph as JSON
-okf-cli export . --documents --out refs.jsonl
+memphis export . --documents        # Reference concepts as JSONL (for RAG)
+memphis export . --graph            # relationship graph as JSON
+memphis export . --documents --out refs.jsonl
 ```
 
 ## MCP Tools
@@ -599,7 +599,7 @@ Summaries are auto-generated during `crawl` and `import` by the configured summa
 
 ## Summarization
 
-Every concept in a bundle gets a `> [!summary]` callout. The summary is what makes the index inline-readable and what powers most of the filing-cabinet's token efficiency. okf-cli supports two summarization modes, selected per bundle by `--summarize` on `import`:
+Every concept in a bundle gets a `> [!summary]` callout. The summary is what makes the index inline-readable and what powers most of the filing-cabinet's token efficiency. memphis supports two summarization modes, selected per bundle by `--summarize` on `import`:
 
 | Mode | Source | When to use |
 |------|--------|-------------|
@@ -628,14 +628,14 @@ Selected with `--summarize-algorithm` on `import`. Defaults to `lsa`.
 
 ### LLM mode
 
-When `--summarize=llm` is passed, okf-cli walks a provider stack and uses the first one that is available:
+When `--summarize=llm` is passed, memphis walks a provider stack and uses the first one that is available:
 
 1. **External OpenAI-compatible API** — used when `api_endpoint` and `api_token` are set in `llm.config`. Honors `Retry-After` on 429s and retries 5xx with exponential backoff.
 2. **Platform-native on-device LLM** — Apple Intelligence on macOS 26 Tahoe + Apple Silicon (opt-in `applefm` build tag, see [docs/APPLE_INTELLIGENCE.md](docs/APPLE_INTELLIGENCE.md)); Windows Copilot Runtime stub.
 3. **Local Ollama** — `http://localhost:11434` by default, model `phi3:mini`.
 4. **Extractive fallback** — if none of the above are reachable, the engine falls back to the extractive summarizer so the import never fails because the LLM was offline.
 
-Configuration lives in `llm.config` (YAML), searched in this order: `<bundle>/llm.config`, then `~/.config/okf-cli/llm.config`.
+Configuration lives in `llm.config` (YAML), searched in this order: `<bundle>/llm.config`, then `~/.config/memphis/llm.config`.
 
 ```yaml
 # Use an external OpenAI-compatible endpoint
@@ -659,7 +659,7 @@ Document content is intelligently truncated to a ~8000-token budget before being
 
 ### Apple Intelligence (macOS 26 Tahoe)
 
-On Apple Silicon Macs running macOS 26 Tahoe with Apple Intelligence enabled, okf-cli can call Foundation Models directly through an in-process CGo bridge — no HTTP server, no API key, no token leaves the device. This is opt-in via the `applefm` build tag so default builds keep working on Intel Macs, older macOS, Linux, and Windows. See [docs/APPLE_INTELLIGENCE.md](docs/APPLE_INTELLIGENCE.md) for the build workflow.
+On Apple Silicon Macs running macOS 26 Tahoe with Apple Intelligence enabled, memphis can call Foundation Models directly through an in-process CGo bridge — no HTTP server, no API key, no token leaves the device. This is opt-in via the `applefm` build tag so default builds keep working on Intel Macs, older macOS, Linux, and Windows. See [docs/APPLE_INTELLIGENCE.md](docs/APPLE_INTELLIGENCE.md) for the build workflow.
 
 When the bridge is built and available, `llm` mode automatically prefers Apple Intelligence over the Ollama fallback (the external `api_endpoint`, if configured, still wins — handy for A/B comparisons against cloud models).
 
@@ -669,12 +669,12 @@ The filing cabinet pattern works well for documentation sets up to ~100 concepts
 
 **Check your bundle's scale:**
 ```bash
-okf-cli inspect ./my-bundle
+memphis inspect ./my-bundle
 ```
 
 **When the ceiling is exceeded:**
 ```bash
-okf-cli inspect ./my-bundle --recommendations
+memphis inspect ./my-bundle --recommendations
 ```
 
 This outputs guidance on adding vector search (RAG) alongside the wiki structure:

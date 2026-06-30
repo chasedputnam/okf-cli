@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/chasedputnam/okf-cli/internal/normalize"
-	"github.com/chasedputnam/okf-cli/internal/types"
-	"github.com/chasedputnam/okf-cli/internal/util"
-	"github.com/chasedputnam/okf-cli/internal/writer"
+	"github.com/chasedputnam/memphis/internal/normalize"
+	"github.com/chasedputnam/memphis/internal/types"
+	"github.com/chasedputnam/memphis/internal/util"
+	"github.com/chasedputnam/memphis/internal/writer"
 )
 
 // ImportOptions configures the import operation.

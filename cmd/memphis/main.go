@@ -1,10 +1,10 @@
-// Command okf-cli converts documentation into Open Knowledge Format bundles.
+// Command memphis converts documentation into Open Knowledge Format bundles.
 package main
 
 import (
 	"os"
 
-	"github.com/chasedputnam/okf-cli/internal/cli"
+	"github.com/chasedputnam/memphis/internal/cli"
 )
 
 // Version is set at build time via ldflags.

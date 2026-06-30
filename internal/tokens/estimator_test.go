@@ -9,8 +9,8 @@ func TestEstimatorCount(t *testing.T) {
 	est := NewEstimator()
 
 	tests := []struct {
-		name     string
-		text     string
+		name      string
+		text      string
 		minTokens int
 		maxTokens int
 	}{
@@ -49,11 +49,11 @@ func TestEstimatorTruncate(t *testing.T) {
 	est := NewEstimator()
 
 	tests := []struct {
-		name       string
-		text       string
-		budget     int
-		wantTrunc  bool
-		maxLen     int
+		name      string
+		text      string
+		budget    int
+		wantTrunc bool
+		maxLen    int
 	}{
 		{"within budget", "hello world", 100, false, 11},
 		{"exactly at budget", "hi", 1, false, 2},
@@ -102,7 +102,7 @@ Final section content.
 	if !truncated {
 		t.Error("Expected truncation for small budget")
 	}
-	
+
 	// Result should end cleanly (not mid-word)
 	if strings.Contains(result, "Section Three") && !strings.Contains(result, "Final") {
 		t.Error("Expected clean truncation at section boundary")
@@ -121,7 +121,7 @@ Final section content.
 func TestEstimatorFallback(t *testing.T) {
 	// Test the fallback calculation directly
 	est := &Estimator{} // Don't initialize tiktoken
-	
+
 	// Fallback uses 4 chars per token
 	text := "12345678" // 8 chars = 2 tokens
 	count := est.fallbackCount(text)
@@ -142,7 +142,7 @@ func TestEstimatorFallback(t *testing.T) {
 
 func TestEstimatorAvailable(t *testing.T) {
 	est := NewEstimator()
-	
+
 	// Should be available after initialization
 	available := est.Available()
 	// We don't fail the test if tiktoken isn't available,

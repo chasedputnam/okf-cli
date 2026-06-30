@@ -11,8 +11,8 @@ package classify
 import (
 	"math"
 
-	"github.com/chasedputnam/okf-cli/internal/canon/artifacts"
-	"github.com/chasedputnam/okf-cli/internal/canon/model"
+	"github.com/chasedputnam/memphis/internal/canon/artifacts"
+	"github.com/chasedputnam/memphis/internal/canon/model"
 )
 
 // ConfidenceThreshold mirrors rac-core CONFIDENCE_THRESHOLD.

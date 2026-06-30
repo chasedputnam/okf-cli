@@ -32,14 +32,14 @@ type EdmundsonConfig struct {
 }
 
 // EdmundsonConfigFileName is the on-disk filename searched for in standard
-// locations (bundle directory, then ~/.config/okf-cli/).
+// locations (bundle directory, then ~/.config/memphis/).
 const EdmundsonConfigFileName = "edmundson.config"
 
 // LoadEdmundsonConfig searches for an Edmundson config in the following
 // order:
 //  1. explicitPath, if non-empty
 //  2. bundlePath/edmundson.config, if bundlePath is non-empty
-//  3. ~/.config/okf-cli/edmundson.config
+//  3. ~/.config/memphis/edmundson.config
 //
 // If none is found, an empty EdmundsonConfig is returned (caller should
 // treat that as "no cue words configured"). Returning an empty config is
@@ -53,7 +53,7 @@ func LoadEdmundsonConfig(bundlePath, explicitPath string) (*EdmundsonConfig, err
 		candidates = append(candidates, filepath.Join(bundlePath, EdmundsonConfigFileName))
 	}
 	if home, err := os.UserHomeDir(); err == nil {
-		candidates = append(candidates, filepath.Join(home, ".config", "okf-cli", EdmundsonConfigFileName))
+		candidates = append(candidates, filepath.Join(home, ".config", "memphis", EdmundsonConfigFileName))
 	}
 
 	for _, path := range candidates {

@@ -1,6 +1,6 @@
 # Architecture
 
-okf-cli is a **single Go binary** that gives AI agents two kinds of memory over one
+memphis is a **single Go binary** that gives AI agents two kinds of memory over one
 substrate — plain Markdown + YAML frontmatter, versioned in Git:
 
 - **Canon** — the *authority* tier. Typed, validated, enforced normative artifacts
@@ -38,7 +38,7 @@ agent-facing loop is **discover (fuzzy) → ground (in Canon, with a citation) �
 4. **Type-conditional strictness.** Canon *blocks* (the gate); Reference *warns* (filing-
    cabinet health). One store holds both honestly.
 5. **Additive and backward compatible.** A store with no Canon behaves exactly like the
-   original okf-cli; no gate is imposed on a pure-Reference store.
+   original memphis; no gate is imposed on a pure-Reference store.
 6. **Writes happen outside the serve path.** All mutation is via CLI / Git PR review; the
    MCP server is read-only.
 
@@ -48,7 +48,7 @@ agent-facing loop is **discover (fuzzy) → ground (in Canon, with a citation) �
 
 ```mermaid
 flowchart TB
-    subgraph CLI["cmd/okf-cli (Cobra)"]
+    subgraph CLI["cmd/memphis (Cobra)"]
         ingest["crawl · import · update"]
         author["new · promote"]
         check["validate · gate · relationships · inspect"]
@@ -119,7 +119,7 @@ flowchart TB
 | `internal/sarif` | SARIF 2.1.0 emitter for CI |
 | `internal/mcp` | Read-only MCP server exposing Canon + discovery tools |
 
-### Reference engine — existing okf-cli packages (unchanged half)
+### Reference engine — existing memphis packages (unchanged half)
 
 `crawler`, `importer`, `reader`, `normalize`, `writer` (ingestion → OKF bundle);
 `graph` (untyped backlinks); `search` (in-memory Bleve over both tiers); `context`
@@ -144,10 +144,10 @@ crawl/import → RawDocument → normalize → NormalizedDocument
 ### Authoring (Canon)
 
 ```
-okf-cli new <type> <path>      → scaffold typed artifact, mint ID  (CLI only)
-okf-cli promote <concept>      → seed a Canon draft from a Reference concept
+memphis new <type> <path>      → scaffold typed artifact, mint ID  (CLI only)
+memphis promote <concept>      → seed a Canon draft from a Reference concept
 human edits + Git PR review     → the trust boundary
-okf-cli gate                   → CI check; blocks bad Canon (exit 1 + SARIF)
+memphis gate                   → CI check; blocks bad Canon (exit 1 + SARIF)
 ```
 
 ### The gate pipeline (`canon/gate`)
@@ -229,7 +229,7 @@ behavior is pinned against rac-core's **real, dogfooded corpus**:
   SARIF rule IDs line up with rac-core's.
 
 When interoperating, the two tools meet at the Open Knowledge Format: rac-core can
-`export --okf`, and okf-cli speaks OKF natively.
+`export --okf`, and memphis speaks OKF natively.
 
 ---
 

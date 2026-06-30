@@ -11,9 +11,9 @@ tags:
 
 The Model Context Protocol (MCP) is a standard for AI agents to interact with external tools and data sources.
 
-## How OKF-CLI Uses MCP
+## How Memphis Uses MCP
 
-OKF-CLI serves OKF bundles through an MCP stdio server, exposing tools that AI agents can use:
+Memphis serves OKF bundles through an MCP stdio server, exposing tools that AI agents can use:
 
 ### Available Tools
 
@@ -32,7 +32,7 @@ Add to your MCP client config:
 {
   "mcpServers": {
     "my-docs": {
-      "command": "okf-cli",
+      "command": "memphis",
       "args": ["serve", "./my-bundle", "--mcp"]
     }
   }

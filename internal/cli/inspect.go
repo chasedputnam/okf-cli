@@ -7,8 +7,8 @@ import (
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 
-	"github.com/chasedputnam/okf-cli/internal/scale"
-	"github.com/chasedputnam/okf-cli/internal/validate"
+	"github.com/chasedputnam/memphis/internal/scale"
+	"github.com/chasedputnam/memphis/internal/validate"
 )
 
 var showRecommendations bool
@@ -38,7 +38,7 @@ func runInspect(cmd *cobra.Command, args []string) error {
 	// Get scale metrics
 	metrics, ceiling, scaleErr := scale.Analyze(bundleDir)
 
-	fmt.Println("okf-cli inspect")
+	fmt.Println("memphis inspect")
 	fmt.Println()
 
 	if stats.Title != "" {

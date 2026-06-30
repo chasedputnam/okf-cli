@@ -8,9 +8,9 @@ import (
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 
-	"github.com/chasedputnam/okf-cli/internal/embed"
-	"github.com/chasedputnam/okf-cli/internal/mcp"
-	"github.com/chasedputnam/okf-cli/internal/validate"
+	"github.com/chasedputnam/memphis/internal/embed"
+	"github.com/chasedputnam/memphis/internal/mcp"
+	"github.com/chasedputnam/memphis/internal/validate"
 )
 
 var demoCmd = &cobra.Command{
@@ -45,9 +45,9 @@ func runDemo(cmd *cobra.Command, args []string) error {
 	} else {
 		// Fall back to filesystem locations
 		demoPaths := []string{
-			"examples/bundles/okf-cli-docs",
-			"../examples/bundles/okf-cli-docs",
-			filepath.Join(os.Getenv("HOME"), ".okf-cli/demo-bundle"),
+			"examples/bundles/memphis-docs",
+			"../examples/bundles/memphis-docs",
+			filepath.Join(os.Getenv("HOME"), ".memphis/demo-bundle"),
 		}
 
 		for _, p := range demoPaths {
@@ -64,7 +64,7 @@ func runDemo(cmd *cobra.Command, args []string) error {
 				fmt.Printf("  %s\n", p)
 			}
 			fmt.Println("\nOr create one with:")
-			fmt.Println("  okf-cli crawl https://example.com/docs --out examples/bundles/okf-cli-docs")
+			fmt.Println("  memphis crawl https://example.com/docs --out examples/bundles/memphis-docs")
 			return fmt.Errorf("demo bundle not found")
 		}
 	}
@@ -76,7 +76,7 @@ func runDemo(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	fmt.Println("okf-cli demo")
+	fmt.Println("memphis demo")
 	fmt.Printf("Bundle: %s\n", bundleDir)
 	if cleanup != nil {
 		fmt.Println("(temporary - extracted from embedded bundle)")
@@ -113,8 +113,8 @@ func runDemo(cmd *cobra.Command, args []string) error {
 	fmt.Println()
 	fmt.Printf(`{
   "mcpServers": {
-    "okf-cli-demo": {
-      "command": "okf-cli",
+    "memphis-demo": {
+      "command": "memphis",
       "args": ["serve", "%s", "--mcp"]
     }
   }
@@ -133,7 +133,7 @@ func runDemo(cmd *cobra.Command, args []string) error {
 		fmt.Println("Starting MCP server...")
 		server, err := mcp.NewServer(mcp.ServerOptions{
 			BundleDir: bundleDir,
-			Name:      "okf-cli-demo",
+			Name:      "memphis-demo",
 		})
 		if err != nil {
 			if cleanup != nil {

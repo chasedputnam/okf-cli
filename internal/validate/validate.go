@@ -10,12 +10,12 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/chasedputnam/okf-cli/internal/graph"
-	"github.com/chasedputnam/okf-cli/internal/reader"
-	"github.com/chasedputnam/okf-cli/internal/scale"
-	"github.com/chasedputnam/okf-cli/internal/summarize"
-	"github.com/chasedputnam/okf-cli/internal/types"
-	"github.com/chasedputnam/okf-cli/internal/util"
+	"github.com/chasedputnam/memphis/internal/graph"
+	"github.com/chasedputnam/memphis/internal/reader"
+	"github.com/chasedputnam/memphis/internal/scale"
+	"github.com/chasedputnam/memphis/internal/summarize"
+	"github.com/chasedputnam/memphis/internal/types"
+	"github.com/chasedputnam/memphis/internal/util"
 	"gopkg.in/yaml.v3"
 )
 

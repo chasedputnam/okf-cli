@@ -28,8 +28,8 @@ func TestRootCommand(t *testing.T) {
 		t.Fatalf("Expected no error, got %v", err)
 	}
 
-	if !strings.Contains(output, "okf-cli") {
-		t.Errorf("Expected help to contain 'okf-cli', got %s", output)
+	if !strings.Contains(output, "memphis") {
+		t.Errorf("Expected help to contain 'memphis', got %s", output)
 	}
 
 	if !strings.Contains(output, "crawl") {
@@ -174,7 +174,6 @@ func TestServeCommandHelp(t *testing.T) {
 		t.Errorf("Expected serve help to show --name flag")
 	}
 }
-
 
 func TestInspectCommandHelp(t *testing.T) {
 	old := os.Stdout

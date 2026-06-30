@@ -9,7 +9,7 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/chasedputnam/okf-cli/internal/tokens"
+	"github.com/chasedputnam/memphis/internal/tokens"
 )
 
 // DefaultTimeout is the per-file timeout for LLM summarization.

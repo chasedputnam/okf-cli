@@ -3,8 +3,8 @@ package classify
 import (
 	"testing"
 
-	"github.com/chasedputnam/okf-cli/internal/canon/artifacts"
-	"github.com/chasedputnam/okf-cli/internal/canon/model"
+	"github.com/chasedputnam/memphis/internal/canon/artifacts"
+	"github.com/chasedputnam/memphis/internal/canon/model"
 )
 
 func product(sections ...string) *model.Product {

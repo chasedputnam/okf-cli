@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/chasedputnam/okf-cli/internal/config"
+	"github.com/chasedputnam/memphis/internal/config"
 )
 
 func writeCanon(t *testing.T, root, rel, content string) {

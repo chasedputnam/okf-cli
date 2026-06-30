@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/chasedputnam/okf-cli/internal/types"
+	"github.com/chasedputnam/memphis/internal/types"
 )
 
 func TestHTMLToMarkdown(t *testing.T) {

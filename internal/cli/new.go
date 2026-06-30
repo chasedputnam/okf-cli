@@ -9,10 +9,10 @@ import (
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 
-	"github.com/chasedputnam/okf-cli/internal/canon/artifacts"
-	"github.com/chasedputnam/okf-cli/internal/canon/frontmatter"
-	"github.com/chasedputnam/okf-cli/internal/canon/identity"
-	"github.com/chasedputnam/okf-cli/internal/config"
+	"github.com/chasedputnam/memphis/internal/canon/artifacts"
+	"github.com/chasedputnam/memphis/internal/canon/frontmatter"
+	"github.com/chasedputnam/memphis/internal/canon/identity"
+	"github.com/chasedputnam/memphis/internal/config"
 )
 
 var newCmd = &cobra.Command{

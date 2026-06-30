@@ -1,4 +1,4 @@
-// Package cli implements the okf-cli command-line interface.
+// Package cli implements the memphis command-line interface.
 package cli
 
 import (
@@ -13,9 +13,9 @@ func SetVersion(v string) {
 }
 
 var rootCmd = &cobra.Command{
-	Use:   "okf-cli",
+	Use:   "memphis",
 	Short: "Turn docs into agent memory with Open Knowledge Format and MCP",
-	Long: `okf-cli converts documentation websites and local Markdown folders into
+	Long: `memphis converts documentation websites and local Markdown folders into
 Open Knowledge Format (OKF) bundles. These bundles can be served via MCP
 to AI agents like Claude, Codex, or Cursor.`,
 }

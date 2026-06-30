@@ -1,7 +1,7 @@
 package summarize
 
 import (
-	"github.com/chasedputnam/okf-cli/internal/summarize/llm"
+	"github.com/chasedputnam/memphis/internal/summarize/llm"
 )
 
 // newLLMOrFallback constructs an LLM-backed summarizer with an extractive

@@ -4,7 +4,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/chasedputnam/okf-cli/internal/canon/artifacts"
+	"github.com/chasedputnam/memphis/internal/canon/artifacts"
 )
 
 // Traversal/edge caps, ported from rac-core core/limits.py.

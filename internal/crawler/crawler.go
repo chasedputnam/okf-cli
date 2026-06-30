@@ -14,14 +14,14 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/temoto/robotstxt"
 
-	"github.com/chasedputnam/okf-cli/internal/normalize"
-	"github.com/chasedputnam/okf-cli/internal/types"
-	"github.com/chasedputnam/okf-cli/internal/util"
-	"github.com/chasedputnam/okf-cli/internal/writer"
+	"github.com/chasedputnam/memphis/internal/normalize"
+	"github.com/chasedputnam/memphis/internal/types"
+	"github.com/chasedputnam/memphis/internal/util"
+	"github.com/chasedputnam/memphis/internal/writer"
 )
 
 const (
-	userAgent        = "okfy/0.1 (+https://github.com/chasedputnam/okf-cli)"
+	userAgent        = "okfy/0.1 (+https://github.com/chasedputnam/memphis)"
 	maxResponseBytes = 5 * 1024 * 1024 // 5MB
 	maxRedirects     = 10
 )

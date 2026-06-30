@@ -3,7 +3,7 @@ package identity
 import (
 	"testing"
 
-	"github.com/chasedputnam/okf-cli/internal/canon/model"
+	"github.com/chasedputnam/memphis/internal/canon/model"
 )
 
 func TestMint_FormatAndDeterminism(t *testing.T) {
@@ -40,12 +40,12 @@ func TestValidID(t *testing.T) {
 		}
 	}
 	invalid := []string{
-		"OKF-SHORT",             // too short
-		"okf-0123456789AB",      // lowercase key
-		"OKF-0123456789AI",      // I not in Crockford
-		"OKF-0123456789AL",      // L not in Crockford
-		"OKF-0123456789ABCD",    // too long
-		"NODASH0123456789AB",    // missing dash
+		"OKF-SHORT",          // too short
+		"okf-0123456789AB",   // lowercase key
+		"OKF-0123456789AI",   // I not in Crockford
+		"OKF-0123456789AL",   // L not in Crockford
+		"OKF-0123456789ABCD", // too long
+		"NODASH0123456789AB", // missing dash
 	}
 	for _, v := range invalid {
 		if ValidID(v) {

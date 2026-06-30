@@ -4,9 +4,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chasedputnam/okf-cli/internal/canon/artifacts"
-	"github.com/chasedputnam/okf-cli/internal/canon/classify"
-	"github.com/chasedputnam/okf-cli/internal/canon/parse"
+	"github.com/chasedputnam/memphis/internal/canon/artifacts"
+	"github.com/chasedputnam/memphis/internal/canon/classify"
+	"github.com/chasedputnam/memphis/internal/canon/parse"
 )
 
 func TestPromoteScaffold_SeedsBodyIntoProseSection(t *testing.T) {
@@ -55,9 +55,9 @@ func TestStripConceptChrome(t *testing.T) {
 
 func TestSlug(t *testing.T) {
 	cases := map[string]string{
-		"Caching Decision":   "caching-decision",
-		"  Hello, World!  ":  "hello-world",
-		"":                   "fallback-id",
+		"Caching Decision":  "caching-decision",
+		"  Hello, World!  ": "hello-world",
+		"":                  "fallback-id",
 	}
 	for in, want := range cases {
 		if got := slug(in, "FALLBACK-ID"); got != want {

@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chasedputnam/okf-cli/internal/changelog"
-	"github.com/chasedputnam/okf-cli/internal/differ"
+	"github.com/chasedputnam/memphis/internal/changelog"
+	"github.com/chasedputnam/memphis/internal/differ"
 )
 
 func TestIsURL(t *testing.T) {
@@ -502,7 +502,7 @@ Same content`
 	}
 
 	if result.Added != 0 || result.Modified != 0 || result.Deleted != 0 {
-		t.Errorf("expected no changes, got added=%d, modified=%d, deleted=%d", 
+		t.Errorf("expected no changes, got added=%d, modified=%d, deleted=%d",
 			result.Added, result.Modified, result.Deleted)
 	}
 }

@@ -7,10 +7,10 @@ import (
 
 	"github.com/mark3labs/mcp-go/mcp"
 
-	"github.com/chasedputnam/okf-cli/internal/canon/artifacts"
-	"github.com/chasedputnam/okf-cli/internal/compress"
-	"github.com/chasedputnam/okf-cli/internal/retrieval"
-	"github.com/chasedputnam/okf-cli/internal/store"
+	"github.com/chasedputnam/memphis/internal/canon/artifacts"
+	"github.com/chasedputnam/memphis/internal/compress"
+	"github.com/chasedputnam/memphis/internal/retrieval"
+	"github.com/chasedputnam/memphis/internal/store"
 )
 
 // registerCanonTools adds the read-only authority (Canon) tools. All Canon

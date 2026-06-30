@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chasedputnam/okf-cli/internal/tokens"
+	"github.com/chasedputnam/memphis/internal/tokens"
 )
 
 func TestEngine_SelectsAPIProvider(t *testing.T) {

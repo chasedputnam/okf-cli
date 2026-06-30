@@ -47,13 +47,13 @@ jobs:
           GOARCH: ${{ matrix.goarch }}
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
-          go build -ldflags "-X main.version=$VERSION" -o okf-cli-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.suffix }} ./cmd/okf-cli
+          go build -ldflags "-X main.version=$VERSION" -o memphis-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.suffix }} ./cmd/memphis
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: okf-cli-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: okf-cli-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.suffix }}
+          name: memphis-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: memphis-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.suffix }}
 
   release:
     needs: build

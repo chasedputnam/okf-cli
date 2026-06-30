@@ -3,9 +3,9 @@ package relate
 import (
 	"testing"
 
-	"github.com/chasedputnam/okf-cli/internal/canon/artifacts"
-	"github.com/chasedputnam/okf-cli/internal/canon/model"
-	"github.com/chasedputnam/okf-cli/internal/canon/parse"
+	"github.com/chasedputnam/memphis/internal/canon/artifacts"
+	"github.com/chasedputnam/memphis/internal/canon/model"
+	"github.com/chasedputnam/memphis/internal/canon/parse"
 )
 
 func entryAlias(id, typ, status, body string, aliases ...string) Entry {

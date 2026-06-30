@@ -8,10 +8,10 @@ import (
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 
-	"github.com/chasedputnam/okf-cli/internal/canon/gate"
-	"github.com/chasedputnam/okf-cli/internal/canon/model"
-	"github.com/chasedputnam/okf-cli/internal/config"
-	"github.com/chasedputnam/okf-cli/internal/sarif"
+	"github.com/chasedputnam/memphis/internal/canon/gate"
+	"github.com/chasedputnam/memphis/internal/canon/model"
+	"github.com/chasedputnam/memphis/internal/config"
+	"github.com/chasedputnam/memphis/internal/sarif"
 )
 
 var gateCmd = &cobra.Command{
@@ -49,7 +49,7 @@ func runGate(cmd *cobra.Command, args []string) error {
 
 	switch {
 	case sarifOut:
-		doc := sarif.FromIssues("okf-cli", version, res.Issues)
+		doc := sarif.FromIssues("memphis", version, res.Issues)
 		data, _ := json.MarshalIndent(doc, "", "  ")
 		fmt.Println(string(data))
 	case jsonOut:
@@ -66,7 +66,7 @@ func runGate(cmd *cobra.Command, args []string) error {
 }
 
 func printGateText(res gate.Result) {
-	fmt.Println("okf-cli gate")
+	fmt.Println("memphis gate")
 	fmt.Printf("Artifacts: %d\n", res.ArtifactCount)
 	if res.Blocking > 0 {
 		color.Red("Blocking: %d", res.Blocking)

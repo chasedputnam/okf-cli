@@ -4,7 +4,7 @@ package compress
 import (
 	"encoding/json"
 
-	"github.com/chasedputnam/okf-cli/internal/tokens"
+	"github.com/chasedputnam/memphis/internal/tokens"
 )
 
 // Level defines compression aggressiveness.
@@ -20,7 +20,7 @@ const (
 // Options configures compression behavior.
 type Options struct {
 	Level               Level
-	TokenBudget         int  // 0 = no limit
+	TokenBudget         int // 0 = no limit
 	PreserveFrontmatter bool
 }
 

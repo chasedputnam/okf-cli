@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/chasedputnam/okf-cli/internal/canon/model"
+	"github.com/chasedputnam/memphis/internal/canon/model"
 )
 
 // Provider returns last-modified times for artifact paths.
@@ -19,9 +19,9 @@ type Provider interface {
 
 // GitProvider derives recency from `git log`. Use NewGitProvider to construct.
 type GitProvider struct {
-	root    string
-	gitOK   bool
-	statFn  func(string) (time.Time, bool)
+	root   string
+	gitOK  bool
+	statFn func(string) (time.Time, bool)
 }
 
 // NewGitProvider probes for a usable Git repository at root.

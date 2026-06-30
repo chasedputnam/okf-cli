@@ -5,7 +5,7 @@ package sarif
 import (
 	"sort"
 
-	"github.com/chasedputnam/okf-cli/internal/canon/model"
+	"github.com/chasedputnam/memphis/internal/canon/model"
 )
 
 const schemaURL = "https://json.schemastore.org/sarif-2.1.0.json"
@@ -109,7 +109,7 @@ func FromIssues(toolName, version string, issues []model.Issue) Document {
 			Tool: Tool{Driver: Driver{
 				Name:           toolName,
 				Version:        version,
-				InformationURI: "https://github.com/chasedputnam/okf-cli",
+				InformationURI: "https://github.com/chasedputnam/memphis",
 				Rules:          rules,
 			}},
 			Results: results,

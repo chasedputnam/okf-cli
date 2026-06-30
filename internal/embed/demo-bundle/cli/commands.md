@@ -9,12 +9,12 @@ tags:
 ---
 # CLI Commands
 
-## okf-cli crawl
+## memphis crawl
 
 Crawl a documentation website and create an OKF bundle.
 
 ```bash
-okf-cli crawl <url> --out <dir> [options]
+memphis crawl <url> --out <dir> [options]
 ```
 
 ### Options
@@ -30,12 +30,12 @@ okf-cli crawl <url> --out <dir> [options]
 - `--force` - Overwrite output directory
 - `--dry-run` - List pages without crawling
 
-## okf-cli import
+## memphis import
 
 Import local files into an OKF bundle.
 
 ```bash
-okf-cli import <path> --out <dir> [options]
+memphis import <path> --out <dir> [options]
 ```
 
 ### Options
@@ -46,34 +46,34 @@ okf-cli import <path> --out <dir> [options]
 - `--exclude` - Exclude patterns
 - `--force` - Overwrite output directory
 
-## okf-cli validate
+## memphis validate
 
 Validate an OKF bundle.
 
 ```bash
-okf-cli validate <bundle> [--json]
+memphis validate <bundle> [--json]
 ```
 
-## okf-cli inspect
+## memphis inspect
 
 Display bundle statistics.
 
 ```bash
-okf-cli inspect <bundle>
+memphis inspect <bundle>
 ```
 
-## okf-cli serve
+## memphis serve
 
 Start an MCP server for a bundle.
 
 ```bash
-okf-cli serve <bundle> --mcp
+memphis serve <bundle> --mcp
 ```
 
-## okf-cli demo
+## memphis demo
 
 Run an offline demo with a bundled example.
 
 ```bash
-okf-cli demo [--serve]
+memphis demo [--serve]
 ```

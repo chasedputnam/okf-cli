@@ -51,8 +51,8 @@ func TestStructural(t *testing.T) {
 			expected: "  indented",
 		},
 		{
-			name: "preserve code block indentation",
-			input: "```go\n\tindented code\n```",
+			name:     "preserve code block indentation",
+			input:    "```go\n\tindented code\n```",
 			expected: "```go\n\tindented code\n```",
 		},
 	}
@@ -72,9 +72,9 @@ func TestCollapseBlankLines(t *testing.T) {
 		input    string
 		expected string
 	}{
-		{"a\n\nb", "a\n\nb"},           // two newlines = one blank line, keep
-		{"a\n\n\nb", "a\n\nb"},         // three newlines, reduce
-		{"a\n\n\n\n\nb", "a\n\nb"},     // many newlines, reduce
+		{"a\n\nb", "a\n\nb"},       // two newlines = one blank line, keep
+		{"a\n\n\nb", "a\n\nb"},     // three newlines, reduce
+		{"a\n\n\n\n\nb", "a\n\nb"}, // many newlines, reduce
 		{"no blanks", "no blanks"},
 	}
 

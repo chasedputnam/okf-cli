@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chasedputnam/okf-cli/internal/config"
-	"github.com/chasedputnam/okf-cli/internal/store"
+	"github.com/chasedputnam/memphis/internal/config"
+	"github.com/chasedputnam/memphis/internal/store"
 )
 
 func exportStore(t *testing.T) *store.Store {

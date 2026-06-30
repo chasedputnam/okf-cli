@@ -1,5 +1,5 @@
 # CLI Reference
 
-Command-line interface documentation for OKF-CLI.
+Command-line interface documentation for Memphis.
 
 - [Commands](commands.md) - All available commands

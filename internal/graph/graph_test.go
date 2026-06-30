@@ -3,7 +3,7 @@ package graph
 import (
 	"testing"
 
-	"github.com/chasedputnam/okf-cli/internal/types"
+	"github.com/chasedputnam/memphis/internal/types"
 )
 
 func TestExtractInternalLinks(t *testing.T) {

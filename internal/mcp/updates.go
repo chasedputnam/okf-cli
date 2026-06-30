@@ -10,11 +10,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/chasedputnam/memphis/internal/changelog"
+	"github.com/chasedputnam/memphis/internal/scale"
+	"github.com/chasedputnam/memphis/internal/updater"
+	"github.com/chasedputnam/memphis/internal/validate"
 	"github.com/mark3labs/mcp-go/mcp"
-	"github.com/chasedputnam/okf-cli/internal/changelog"
-	"github.com/chasedputnam/okf-cli/internal/scale"
-	"github.com/chasedputnam/okf-cli/internal/updater"
-	"github.com/chasedputnam/okf-cli/internal/validate"
 )
 
 // CheckUpdatesResult is returned by check_updates tool.

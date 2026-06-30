@@ -3,7 +3,7 @@ package compress
 import (
 	"strings"
 
-	"github.com/chasedputnam/okf-cli/internal/tokens"
+	"github.com/chasedputnam/memphis/internal/tokens"
 )
 
 // TruncateOptions configures truncation behavior.
@@ -57,7 +57,7 @@ func Truncate(content string, opts TruncateOptions) TruncateResult {
 
 	// Parse sections
 	sections := parseSections(body)
-	
+
 	// Build result by adding sections until budget exceeded
 	var result strings.Builder
 	var includedSections []string
@@ -115,7 +115,7 @@ func parseSections(content string) []section {
 
 	for _, line := range lines {
 		trimmed := strings.TrimSpace(line)
-		
+
 		// Check for header
 		if strings.HasPrefix(trimmed, "#") {
 			// Save previous section if any
@@ -180,7 +180,7 @@ func splitFrontmatter(content string) (frontmatter, body string) {
 func GenerateSectionOutline(content string) []string {
 	_, body := splitFrontmatter(content)
 	sections := parseSections(body)
-	
+
 	var outline []string
 	for _, s := range sections {
 		if s.Title != "" {

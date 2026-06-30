@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chasedputnam/okf-cli/internal/importer"
-	"github.com/chasedputnam/okf-cli/internal/updater"
+	"github.com/chasedputnam/memphis/internal/importer"
+	"github.com/chasedputnam/memphis/internal/updater"
 )
 
 // captureStdout runs fn with os.Stdout redirected and returns whatever was

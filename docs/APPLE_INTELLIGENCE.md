@@ -1,6 +1,6 @@
 # Apple Intelligence Provider
 
-okf-cli can summarize documents using Apple's on-device Foundation Models
+memphis can summarize documents using Apple's on-device Foundation Models
 framework (macOS 26 Tahoe). When enabled, the engine routes `--summarize=llm`
 calls directly through the Foundation Models CGo bridge — no network, no
 HTTP server, no API key.
@@ -29,7 +29,7 @@ built only when **all** of these constraints hold:
 
 It wraps [`github.com/blacktop/go-foundationmodels`](https://github.com/blacktop/go-foundationmodels),
 which compiles a Swift shim (`FoundationModelsShim.swift`) into a static
-library (`libFMShim.a`) that links into the okf-cli binary. The shim is
+library (`libFMShim.a`) that links into the memphis binary. The shim is
 **not** vendored or shipped pre-built — it has to be compiled locally
 because:
 
@@ -53,8 +53,8 @@ cd vendor/github.com/blacktop/go-foundationmodels
 go generate ./...
 cd -
 
-# 3. Build okf-cli with the applefm tag against the vendored tree.
-CGO_ENABLED=1 go build -mod=vendor -tags=applefm -o okf-cli ./cmd/okf-cli
+# 3. Build memphis with the applefm tag against the vendored tree.
+CGO_ENABLED=1 go build -mod=vendor -tags=applefm -o memphis ./cmd/memphis
 ```
 
 The first two steps only need to be repeated when the
@@ -65,7 +65,7 @@ The first two steps only need to be repeated when the
 After install, run:
 
 ```bash
-./okf-cli import --summarize=llm <source>
+./memphis import --summarize=llm <source>
 ```
 
 The changelog (`<bundle>/changelog.md`) will record `summarize_mode: llm`,
@@ -78,7 +78,7 @@ extractive summarization.
 
 An [Apple Intelligence HTTP wrapper](https://github.com/gouwsxander/Apple-Intelligence-API)
 exists that exposes Foundation Models as an OpenAI-compatible server. It
-works with okf-cli's existing `api` provider (set `api_endpoint:
+works with memphis's existing `api` provider (set `api_endpoint:
 http://localhost:8080/api/v1/chat/completions` in `llm.config`), but
 requires running a separate Swift server alongside the CLI.
 
@@ -91,7 +91,7 @@ build-time setup above.
 To go back to the stub, just build without the tag:
 
 ```bash
-go build -o okf-cli ./cmd/okf-cli
+go build -o memphis ./cmd/memphis
 ```
 
 The provider falls through and the engine picks Ollama or extractive.

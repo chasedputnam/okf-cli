@@ -66,7 +66,7 @@ type Product struct {
 	Title        string                 `json:"title"`
 	TitleCount   int                    `json:"title_count"` // number of level-1 (#) headings
 	Sections     map[string]string      `json:"sections"`    // normalized heading -> body text
-	Order        []string               `json:"order"`    // section headings in document order
+	Order        []string               `json:"order"`       // section headings in document order
 	Requirements []Requirement          `json:"requirements,omitempty"`
 	Malformed    []MalformedRequirement `json:"malformed,omitempty"`
 	Metadata     Frontmatter            `json:"metadata"`

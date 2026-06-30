@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chasedputnam/okf-cli/internal/canon/model"
+	"github.com/chasedputnam/memphis/internal/canon/model"
 )
 
 func TestParse_Valid(t *testing.T) {

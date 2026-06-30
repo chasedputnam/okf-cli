@@ -1,4 +1,4 @@
-module github.com/chasedputnam/okf-cli
+module github.com/chasedputnam/memphis
 
 go 1.25.5
 

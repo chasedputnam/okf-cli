@@ -10,15 +10,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/chasedputnam/okf-cli/internal/changelog"
-	"github.com/chasedputnam/okf-cli/internal/crawler"
-	"github.com/chasedputnam/okf-cli/internal/differ"
-	"github.com/chasedputnam/okf-cli/internal/importer"
-	"github.com/chasedputnam/okf-cli/internal/normalize"
-	"github.com/chasedputnam/okf-cli/internal/summarize"
-	"github.com/chasedputnam/okf-cli/internal/types"
-	"github.com/chasedputnam/okf-cli/internal/util"
-	"github.com/chasedputnam/okf-cli/internal/writer"
+	"github.com/chasedputnam/memphis/internal/changelog"
+	"github.com/chasedputnam/memphis/internal/crawler"
+	"github.com/chasedputnam/memphis/internal/differ"
+	"github.com/chasedputnam/memphis/internal/importer"
+	"github.com/chasedputnam/memphis/internal/normalize"
+	"github.com/chasedputnam/memphis/internal/summarize"
+	"github.com/chasedputnam/memphis/internal/types"
+	"github.com/chasedputnam/memphis/internal/util"
+	"github.com/chasedputnam/memphis/internal/writer"
 )
 
 // UpdateOptions configures the update operation.
@@ -376,7 +376,7 @@ func assignOutputPaths(docs []types.NormalizedDocument) {
 		} else {
 			base = util.EnsureMarkdownPath(doc.SourcePath)
 		}
-		
+
 		candidate := base
 		index := 2
 		for used[candidate] {

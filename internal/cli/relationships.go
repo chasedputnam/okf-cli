@@ -8,10 +8,10 @@ import (
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 
-	"github.com/chasedputnam/okf-cli/internal/canon"
-	"github.com/chasedputnam/okf-cli/internal/canon/model"
-	"github.com/chasedputnam/okf-cli/internal/canon/relate"
-	"github.com/chasedputnam/okf-cli/internal/config"
+	"github.com/chasedputnam/memphis/internal/canon"
+	"github.com/chasedputnam/memphis/internal/canon/model"
+	"github.com/chasedputnam/memphis/internal/canon/relate"
+	"github.com/chasedputnam/memphis/internal/config"
 )
 
 var relationshipsCmd = &cobra.Command{
@@ -72,7 +72,7 @@ func runRelationships(cmd *cobra.Command, args []string) error {
 		data, _ := json.MarshalIndent(out, "", "  ")
 		fmt.Println(string(data))
 	} else {
-		fmt.Println("okf-cli relationships")
+		fmt.Println("memphis relationships")
 		fmt.Printf("Artifacts: %d\n", len(arts))
 		edgeCount := 0
 		for _, es := range graph.Edges {

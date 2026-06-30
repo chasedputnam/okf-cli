@@ -32,7 +32,7 @@ Add to your MCP client config:
 {
   "mcpServers": {
     "my-docs": {
-      "command": "okf-cli",
+      "command": "memphis",
       "args": ["serve", "./my-bundle", "--mcp"]
     }
   }

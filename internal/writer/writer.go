@@ -11,12 +11,12 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/chasedputnam/okf-cli/internal/changelog"
-	"github.com/chasedputnam/okf-cli/internal/normalize"
-	"github.com/chasedputnam/okf-cli/internal/summarize"
-	"github.com/chasedputnam/okf-cli/internal/tokens"
-	"github.com/chasedputnam/okf-cli/internal/types"
-	"github.com/chasedputnam/okf-cli/internal/util"
+	"github.com/chasedputnam/memphis/internal/changelog"
+	"github.com/chasedputnam/memphis/internal/normalize"
+	"github.com/chasedputnam/memphis/internal/summarize"
+	"github.com/chasedputnam/memphis/internal/tokens"
+	"github.com/chasedputnam/memphis/internal/types"
+	"github.com/chasedputnam/memphis/internal/util"
 )
 
 // WriteOptions configures bundle writing.
@@ -42,10 +42,10 @@ type WriteOptions struct {
 
 // SummaryStats tracks the outcome of summarization across a bundle.
 type SummaryStats struct {
-	Total      int
-	BySource   map[string]int
-	Fallbacks  int
-	Failed     int
+	Total     int
+	BySource  map[string]int
+	Fallbacks int
+	Failed    int
 }
 
 // NewSummaryStats creates an empty SummaryStats.
@@ -579,16 +579,16 @@ func writeIndexFiles(opts WriteOptions, conceptsByDir map[string][]writtenConcep
 
 		for _, concept := range concepts {
 			relLink := path.Base(concept.relPath)
-			
+
 			// Format: - [[path]] · Type, tag1, tag2
 			//           Summary text
 			typeAndTags := concept.docType
 			if len(concept.tags) > 0 {
 				typeAndTags += ", " + strings.Join(concept.tags, ", ")
 			}
-			
+
 			_, _ = fmt.Fprintf(&content, "- [[%s]] · %s\n", strings.TrimSuffix(relLink, ".md"), typeAndTags)
-			
+
 			// Add summary on next line with indent
 			if concept.summary != "" {
 				_, _ = fmt.Fprintf(&content, "  %s\n", concept.summary)

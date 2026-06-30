@@ -10,15 +10,15 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/chasedputnam/memphis/internal/compress"
+	"github.com/chasedputnam/memphis/internal/config"
+	"github.com/chasedputnam/memphis/internal/scale"
+	"github.com/chasedputnam/memphis/internal/search"
+	"github.com/chasedputnam/memphis/internal/store"
+	"github.com/chasedputnam/memphis/internal/tokens"
+	"github.com/chasedputnam/memphis/internal/validate"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
-	"github.com/chasedputnam/okf-cli/internal/compress"
-	"github.com/chasedputnam/okf-cli/internal/config"
-	"github.com/chasedputnam/okf-cli/internal/scale"
-	"github.com/chasedputnam/okf-cli/internal/search"
-	"github.com/chasedputnam/okf-cli/internal/store"
-	"github.com/chasedputnam/okf-cli/internal/tokens"
-	"github.com/chasedputnam/okf-cli/internal/validate"
 )
 
 // ServerOptions configures the MCP server.
@@ -50,7 +50,7 @@ func NewServer(opts ServerOptions) (*Server, error) {
 
 	name := opts.Name
 	if name == "" {
-		name = "okf-cli"
+		name = "memphis"
 	}
 
 	maxResultChars := opts.MaxResultChars

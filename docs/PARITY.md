@@ -56,10 +56,10 @@ To verify parity between implementations:
 1. **Import the same folder**:
    ```bash
    # TypeScript
-   npx okf-cli import ./docs --out ./bundle-ts
+   npx memphis import ./docs --out ./bundle-ts
    
    # Go
-   okf-cli import ./docs --out ./bundle-go
+   memphis import ./docs --out ./bundle-go
    ```
 
 2. **Compare bundle structure**:
@@ -69,8 +69,8 @@ To verify parity between implementations:
 
 3. **Validate both bundles**:
    ```bash
-   okf-cli validate ./bundle-ts
-   okf-cli validate ./bundle-go
+   memphis validate ./bundle-ts
+   memphis validate ./bundle-go
    ```
 
 4. **Test MCP tools**:

@@ -9,15 +9,15 @@ import (
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 
-	"github.com/chasedputnam/okf-cli/internal/canon/artifacts"
-	"github.com/chasedputnam/okf-cli/internal/canon/classify"
-	"github.com/chasedputnam/okf-cli/internal/canon/frontmatter"
-	"github.com/chasedputnam/okf-cli/internal/canon/identity"
-	"github.com/chasedputnam/okf-cli/internal/canon/model"
-	"github.com/chasedputnam/okf-cli/internal/canon/parse"
-	"github.com/chasedputnam/okf-cli/internal/canon/validate"
-	"github.com/chasedputnam/okf-cli/internal/config"
-	"github.com/chasedputnam/okf-cli/internal/store"
+	"github.com/chasedputnam/memphis/internal/canon/artifacts"
+	"github.com/chasedputnam/memphis/internal/canon/classify"
+	"github.com/chasedputnam/memphis/internal/canon/frontmatter"
+	"github.com/chasedputnam/memphis/internal/canon/identity"
+	"github.com/chasedputnam/memphis/internal/canon/model"
+	"github.com/chasedputnam/memphis/internal/canon/parse"
+	"github.com/chasedputnam/memphis/internal/canon/validate"
+	"github.com/chasedputnam/memphis/internal/config"
+	"github.com/chasedputnam/memphis/internal/store"
 )
 
 var promoteCmd = &cobra.Command{
@@ -110,7 +110,7 @@ func runPromote(cmd *cobra.Command, args []string) error {
 		for _, iss := range blocking {
 			color.Yellow("  [%s] %s", iss.Code, iss.Message)
 		}
-		fmt.Println("\nEdit the artifact to resolve these, then run `okf-cli gate`.")
+		fmt.Println("\nEdit the artifact to resolve these, then run `memphis gate`.")
 	} else {
 		color.Green("Promoted draft passes validation.")
 	}

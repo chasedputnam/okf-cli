@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/chasedputnam/okf-cli/internal/config"
+	"github.com/chasedputnam/memphis/internal/config"
 )
 
 func TestRun_PureReferenceBundlePasses(t *testing.T) {

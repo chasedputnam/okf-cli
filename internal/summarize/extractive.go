@@ -10,7 +10,7 @@ import (
 )
 
 // ExtractiveAdapter adapts a sumer.Summarizer to the high-level Summarizer
-// interface used elsewhere in okf-cli.
+// interface used elsewhere in memphis.
 type ExtractiveAdapter struct {
 	algorithm       string
 	language        string

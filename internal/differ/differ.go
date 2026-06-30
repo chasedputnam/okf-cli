@@ -8,9 +8,9 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/chasedputnam/okf-cli/internal/summarize"
-	"github.com/chasedputnam/okf-cli/internal/types"
-	"github.com/chasedputnam/okf-cli/internal/util"
+	"github.com/chasedputnam/memphis/internal/summarize"
+	"github.com/chasedputnam/memphis/internal/types"
+	"github.com/chasedputnam/memphis/internal/util"
 )
 
 // ChangeType indicates the type of change detected.

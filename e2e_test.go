@@ -13,15 +13,15 @@ var testBinaryPath string
 
 func TestMain(m *testing.M) {
 	// Build the binary once for all tests
-	tmpDir, err := os.MkdirTemp("", "okf-cli-test-*")
+	tmpDir, err := os.MkdirTemp("", "memphis-test-*")
 	if err != nil {
 		_, _ = os.Stderr.WriteString("Failed to create temp dir: " + err.Error() + "\n")
 		os.Exit(1)
 	}
 	defer func() { _ = os.RemoveAll(tmpDir) }()
 
-	testBinaryPath = filepath.Join(tmpDir, "okf-cli")
-	cmd := exec.Command("go", "build", "-o", testBinaryPath, "./cmd/okf-cli")
+	testBinaryPath = filepath.Join(tmpDir, "memphis")
+	cmd := exec.Command("go", "build", "-o", testBinaryPath, "./cmd/memphis")
 	if out, err := cmd.CombinedOutput(); err != nil {
 		_, _ = os.Stderr.WriteString("Failed to build binary: " + err.Error() + "\n" + string(out))
 		os.Exit(1)
@@ -81,7 +81,7 @@ func TestE2EImportCommand(t *testing.T) {
 // TestE2EValidateCommand tests the validate workflow
 func TestE2EValidateCommand(t *testing.T) {
 	// Run validate on demo bundle
-	validateCmd := exec.Command(testBinaryPath, "validate", "examples/bundles/okf-cli-docs")
+	validateCmd := exec.Command(testBinaryPath, "validate", "examples/bundles/memphis-docs")
 	out, err := validateCmd.CombinedOutput()
 	if err != nil {
 		t.Fatalf("Validate failed: %v\n%s", err, out)
@@ -96,7 +96,7 @@ func TestE2EValidateCommand(t *testing.T) {
 // TestE2EValidateJSONOutput tests JSON output format
 func TestE2EValidateJSONOutput(t *testing.T) {
 	// Run validate with --json
-	validateCmd := exec.Command(testBinaryPath, "validate", "examples/bundles/okf-cli-docs", "--json")
+	validateCmd := exec.Command(testBinaryPath, "validate", "examples/bundles/memphis-docs", "--json")
 	out, err := validateCmd.CombinedOutput()
 	if err != nil {
 		t.Fatalf("Validate --json failed: %v\n%s", err, out)
@@ -119,7 +119,7 @@ func TestE2EValidateJSONOutput(t *testing.T) {
 // TestE2EInspectCommand tests the inspect workflow
 func TestE2EInspectCommand(t *testing.T) {
 	// Run inspect on demo bundle
-	inspectCmd := exec.Command(testBinaryPath, "inspect", "examples/bundles/okf-cli-docs")
+	inspectCmd := exec.Command(testBinaryPath, "inspect", "examples/bundles/memphis-docs")
 	out, err := inspectCmd.CombinedOutput()
 	if err != nil {
 		t.Fatalf("Inspect failed: %v\n%s", err, out)
@@ -144,8 +144,8 @@ func TestE2EDemoCommand(t *testing.T) {
 	}
 
 	output := string(out)
-	if !strings.Contains(output, "okf-cli demo") {
-		t.Errorf("Expected 'okf-cli demo' in output, got: %s", output)
+	if !strings.Contains(output, "memphis demo") {
+		t.Errorf("Expected 'memphis demo' in output, got: %s", output)
 	}
 	if !strings.Contains(output, "Bundle is valid") {
 		t.Errorf("Expected 'Bundle is valid' in output, got: %s", output)
@@ -387,10 +387,10 @@ After installation, you can:
 func TestE2EBudgetAwareSearch(t *testing.T) {
 	// This test verifies the concept: when a budget is applied, content is truncated
 	longContent := strings.Repeat("Lorem ipsum dolor sit amet. ", 100)
-	
+
 	// Without budget - full content
 	noBudgetSize := len(longContent)
-	
+
 	// With budget - content should be truncated
 	budget := 200 // tokens, ~800 chars
 	maxChars := budget * 4
@@ -403,7 +403,7 @@ func TestE2EBudgetAwareSearch(t *testing.T) {
 	if withBudgetSize >= noBudgetSize {
 		t.Errorf("Expected budget to limit content size: no_budget=%d, with_budget=%d", noBudgetSize, withBudgetSize)
 	}
-	
+
 	// Verify truncation happened
 	if !strings.HasSuffix(withBudgetContent, "[truncated]") {
 		t.Error("Expected content to be truncated with indicator")
@@ -505,7 +505,7 @@ func TestE2EImportGeneratesEnhancedIndex(t *testing.T) {
 // TestE2EInspectShowsScaleMetrics tests that inspect shows scale metrics
 func TestE2EInspectShowsScaleMetrics(t *testing.T) {
 	// Run inspect on demo bundle
-	inspectCmd := exec.Command(testBinaryPath, "inspect", "examples/bundles/okf-cli-docs")
+	inspectCmd := exec.Command(testBinaryPath, "inspect", "examples/bundles/memphis-docs")
 	out, err := inspectCmd.CombinedOutput()
 	if err != nil {
 		t.Fatalf("Inspect failed: %v\n%s", err, out)

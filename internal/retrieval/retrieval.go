@@ -13,9 +13,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/chasedputnam/okf-cli/internal/compress"
-	"github.com/chasedputnam/okf-cli/internal/store"
-	"github.com/chasedputnam/okf-cli/internal/tokens"
+	"github.com/chasedputnam/memphis/internal/compress"
+	"github.com/chasedputnam/memphis/internal/store"
+	"github.com/chasedputnam/memphis/internal/tokens"
 )
 
 const (

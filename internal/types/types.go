@@ -1,4 +1,4 @@
-// Package types defines the core data structures used throughout okf-cli.
+// Package types defines the core data structures used throughout memphis.
 package types
 
 import "time"
@@ -96,17 +96,17 @@ type LinkedConcept struct {
 
 // BundleStats contains bundle inspection results.
 type BundleStats struct {
-	Title             string            `json:"title"`
-	ConceptCount      int               `json:"conceptCount"`
-	ReservedFileCount int               `json:"reservedFileCount"`
-	WarningCount      int               `json:"warningCount"`
-	LinkCount         int               `json:"linkCount"`
-	BrokenLinks       int               `json:"brokenLinks"`
-	OrphanConcepts    []string          `json:"orphanConcepts"`
-	TypeDistribution  map[string]int    `json:"typeDistribution"`
-	TagDistribution   map[string]int    `json:"tagDistribution"`
-	TopLinkedConcepts []LinkedConcept   `json:"topLinkedConcepts"`
-	SourceDomains     map[string]int    `json:"sourceDomains"`
+	Title             string          `json:"title"`
+	ConceptCount      int             `json:"conceptCount"`
+	ReservedFileCount int             `json:"reservedFileCount"`
+	WarningCount      int             `json:"warningCount"`
+	LinkCount         int             `json:"linkCount"`
+	BrokenLinks       int             `json:"brokenLinks"`
+	OrphanConcepts    []string        `json:"orphanConcepts"`
+	TypeDistribution  map[string]int  `json:"typeDistribution"`
+	TagDistribution   map[string]int  `json:"tagDistribution"`
+	TopLinkedConcepts []LinkedConcept `json:"topLinkedConcepts"`
+	SourceDomains     map[string]int  `json:"sourceDomains"`
 }
 
 // SearchResult represents a search hit.

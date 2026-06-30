@@ -154,7 +154,7 @@ Content two.
 `
 
 	sections := parseSections(content)
-	
+
 	if len(sections) != 3 {
 		t.Errorf("Expected 3 sections, got %d", len(sections))
 	}
@@ -197,7 +197,7 @@ Final words.
 `
 
 	outline := GenerateSectionOutline(content)
-	
+
 	if len(outline) != 4 {
 		t.Errorf("Expected 4 outline items, got %d: %v", len(outline), outline)
 	}

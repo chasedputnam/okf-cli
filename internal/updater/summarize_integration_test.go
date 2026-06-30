@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/chasedputnam/okf-cli/internal/changelog"
-	"github.com/chasedputnam/okf-cli/internal/importer"
+	"github.com/chasedputnam/memphis/internal/changelog"
+	"github.com/chasedputnam/memphis/internal/importer"
 )
 
 // TestUpdate_UsesChangelogPreferences verifies that when no flags are

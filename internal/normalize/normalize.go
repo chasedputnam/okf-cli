@@ -7,8 +7,8 @@ import (
 
 	md "github.com/JohannesKaufmann/html-to-markdown"
 	"github.com/PuerkitoBio/goquery"
-	"github.com/chasedputnam/okf-cli/internal/types"
-	"github.com/chasedputnam/okf-cli/internal/util"
+	"github.com/chasedputnam/memphis/internal/types"
+	"github.com/chasedputnam/memphis/internal/util"
 )
 
 // elementsToRemove are HTML elements that should be stripped before conversion.
@@ -30,8 +30,8 @@ var converter *md.Converter
 
 func init() {
 	converter = md.NewConverter("", true, &md.Options{
-		HeadingStyle:    "atx",
-		CodeBlockStyle:  "fenced",
+		HeadingStyle:     "atx",
+		CodeBlockStyle:   "fenced",
 		BulletListMarker: "-",
 	})
 	// Keep tables as HTML (they'll be preserved)

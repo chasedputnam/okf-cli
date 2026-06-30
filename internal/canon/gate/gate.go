@@ -6,11 +6,11 @@
 package gate
 
 import (
-	"github.com/chasedputnam/okf-cli/internal/canon"
-	"github.com/chasedputnam/okf-cli/internal/canon/model"
-	"github.com/chasedputnam/okf-cli/internal/canon/relate"
-	"github.com/chasedputnam/okf-cli/internal/canon/validate"
-	"github.com/chasedputnam/okf-cli/internal/config"
+	"github.com/chasedputnam/memphis/internal/canon"
+	"github.com/chasedputnam/memphis/internal/canon/model"
+	"github.com/chasedputnam/memphis/internal/canon/relate"
+	"github.com/chasedputnam/memphis/internal/canon/validate"
+	"github.com/chasedputnam/memphis/internal/config"
 )
 
 // Result aggregates all gate findings.

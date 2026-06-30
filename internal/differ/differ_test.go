@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/chasedputnam/okf-cli/internal/types"
+	"github.com/chasedputnam/memphis/internal/types"
 )
 
 func TestDiffBundlesAddedFiles(t *testing.T) {

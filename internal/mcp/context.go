@@ -3,9 +3,9 @@ package mcp
 import (
 	"context"
 
+	"github.com/chasedputnam/memphis/internal/compress"
+	ctxpkg "github.com/chasedputnam/memphis/internal/context"
 	"github.com/mark3labs/mcp-go/mcp"
-	"github.com/chasedputnam/okf-cli/internal/compress"
-	ctxpkg "github.com/chasedputnam/okf-cli/internal/context"
 )
 
 func (s *Server) handleGetContext(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
